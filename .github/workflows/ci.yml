@@ -58,7 +58,7 @@ jobs:
             cmake_options="$cmake_options -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
           fi
           cmake_options="$(echo $cmake_options)" # prettify
-          
+          echo "cmake_options : $cmake_options"
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             cmd //c "${{ steps.sofa.outputs.vs_vsdevcmd }} \
               && cd /d $WORKSPACE_BUILD_PATH \
