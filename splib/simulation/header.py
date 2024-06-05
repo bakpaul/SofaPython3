@@ -1,7 +1,6 @@
-from utils import getParameterSet
-from nodeWrapper import prefabMethod
+from NodeWrapper import PrefabMethod
 
-@prefabMethod
+@PrefabMethod
 def setupDefaultHeader(node, _displayFlags = "showVisualModels", _parallelComputing=False,**kwargs):
 
     node.addObject('VisualStyle', displayFlags=_displayFlags)
@@ -15,11 +14,11 @@ def setupDefaultHeader(node, _displayFlags = "showVisualModels", _parallelComput
                                                  'Sofa.Component.StateContainer',
                                                  'Sofa.Component.Topology.Container.Grid',
                                                  ])
-    node.addObject('DefaultAnimationLoop',name="animation", parallelODESolving=_parallelComputing, **getParameterSet("animation",kwargs))
+    node.addObject('DefaultAnimationLoop',name="animation", parallelODESolving=_parallelComputing, **kwargs)
 
     return node
 
-@prefabMethod
+@PrefabMethod
 def setupCollisionHeader(node,  _displayFlags = "showVisualModels", _parallelComputing=False,**kwargs):
 
     node.addObject('VisualStyle', displayFlags=_displayFlags)

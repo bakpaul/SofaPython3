@@ -16,7 +16,7 @@ class NodeWrapper(object):
 
 
 
-def prefabMethod(method):
+def PrefabMethod(method):
     def wrapper(*args, **kwargs):
         method(NodeWrapper(args[0]),**kwargs)
     return wrapper()

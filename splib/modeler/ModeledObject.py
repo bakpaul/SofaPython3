@@ -25,7 +25,7 @@ class InstanciationMethod():
 ##########
 # Object constituted only of a list of InstanciationMethod acting on a Node object that will actually do the instanciation
 ##########
-class PrefabricatedObject(object):
+class ModeledObject(object):
     class MethodList():
         instanciationMethods : List[InstanciationMethod]
 
@@ -76,7 +76,7 @@ class PrefabricatedObject(object):
     name                 : str
     def __init__(self,_name):
         self.name = _name
-        self.instanciationMethods = PrefabricatedObject.MethodList()
+        self.instanciationMethods = ModeledObject.MethodList()
     def instantiate(self, _node):
         self.node = _node.addChild(self.name)
         for tup in self.instanciationMethods:
@@ -88,10 +88,10 @@ class PrefabricatedObject(object):
 ##########
 # Prefab specialization for simulated objects
 ##########
-class SimulatedObject(PrefabricatedObject):
+class SimulatedObject(ModeledObject):
     template : str
     def __init__(self,name:str,_template=None):
-        PrefabricatedObject.__init__(self,name)
+        ModeledObject.__init__(self,name)
         self.template = _template
 
     def defaultConstruction(self,_solverParams,_topologyParams,_mechaParams):
@@ -116,7 +116,7 @@ class SimulatedObject(PrefabricatedObject):
         self.instanciationMethods.append(InstanciationMethod("Collision",SimulatedObject._implAddCollisionModel,{"some" : some, "args" : args, kwargs : kwargs}))
 
     def addMappedObject(self,
-                        obj:PrefabricatedObject,
+                        obj:ModeledObject,
                         mappingType:str = "Barycentric"):
         self.instanciationMethods.append(InstanciationMethod(obj.name,SimulatedObject._implAddMappedObjects,{ "obj" : obj ,"mappingType" : mappingType }))
 
@@ -145,7 +145,7 @@ class SimulatedObject(PrefabricatedObject):
         pass
 
     @staticmethod
-    def _implAddMappedObjects(parentNode, obj:PrefabricatedObject, mappingType:str = "Barycentric") -> None:
+    def _implAddMappedObjects(parentNode, obj:ModeledObject, mappingType:str = "Barycentric") -> None:
         obj.instantiate(parentNode)
         obj.node.addObject(mappingType + "Mapping")
 
