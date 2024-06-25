@@ -1,4 +1,4 @@
-from typing import List, Callable, Tuple, Dict,
+from typing import List, Callable, Tuple, Dict
 
 def getParameterSet(name : str,parameterSet : Dict) -> Dict:
     if name in parameterSet:

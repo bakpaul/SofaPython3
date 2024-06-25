@@ -1,1 +1,1 @@
-__all__ = ["NodeWrapper","MappedObject", "Utils"]
+__all__ = ["NodeWrapper", "Utils"]
