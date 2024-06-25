@@ -5,13 +5,19 @@ def _getContainerParamsSet(**kwargs):
             containerParams = kwargs["container"]
     return containerParams
 
+def BaseTopo(method):
+    def wrapper(*args, **kwargs):
+        containerParams = _getContainerParamsSet(**kwargs)
+        if kwargs["_source"]:
+            containerParams["src"] = kwargs["_source"]
+        kwargs["container"] = containerParams
+        method(*args,**kwargs)
+
 def PointsTopo(method):
     def wrapper(*args, **kwargs):
         containerParams = _getContainerParamsSet(**kwargs)
         if kwargs["_position"]:
             containerParams["position"] = kwargs["_position"]
-        if kwargs["_source"]:
-            containerParams["src"] = kwargs["_source"]
         kwargs["container"] = containerParams
         method(*args,**kwargs)
     return wrapper()

@@ -19,16 +19,19 @@ def _addDynamicTopologyFromString(elementName:str,node:NodeWrapper,**kwargs):
 
 
 @PrefabMethod
+@BaseTopo
 @PointsTopo
 def addPointTopology(node,_position=None,_source=None,**kwargs):
     _addDynamicTopologyFromString("Point",node,**kwargs)
 @PrefabMethod
+@BaseTopo
 @PointsTopo
 @EdgesTopo
 def addEdgeTopology(node,_position=None,_edges=None,_source=None,**kwargs):
     _addDynamicTopologyFromString("Edge",node,**kwargs)
 
 @PrefabMethod
+@BaseTopo
 @PointsTopo
 @EdgesTopo
 @TrianglesTopo
@@ -36,6 +39,7 @@ def addTriangleTopology(node,_position=None,_edges=None,_triangles=None,_source=
     _addDynamicTopologyFromString("Triangle",node,**kwargs)
 
 @PrefabMethod
+@BaseTopo
 @PointsTopo
 @EdgesTopo
 @QuadsTopo
@@ -43,6 +47,7 @@ def addQuadTopology(node,_position=None,_edges=None,_quads=None,_source=None,**k
     _addDynamicTopologyFromString("Quad",node,**kwargs)
 
 @PrefabMethod
+@BaseTopo
 @PointsTopo
 @EdgesTopo
 @TrianglesTopo
@@ -51,6 +56,7 @@ def addTetrahedronTopology(node,_position=None,_edges=None,_triangles=None,_tetr
     _addDynamicTopologyFromString("Tetrahedron",node,**kwargs)
 
 @PrefabMethod
+@BaseTopo
 @PointsTopo
 @EdgesTopo
 @QuadsTopo
