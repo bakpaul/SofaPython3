@@ -48,7 +48,7 @@ def addQuadTopology(node,_position=None,_edges=None,_quads=None,_source=None,**k
 @TrianglesTopo
 @TetrahedronTopo
 def addTetrahedronTopology(node,_position=None,_edges=None,_triangles=None,_tetrahedra=None,_source=None,**kwargs):
-    _addDynamicTopologyFromString("Tetrahedron",node,_source=_source,**kwargs)
+    _addDynamicTopologyFromString("Tetrahedron",node,**kwargs)
 
 @PrefabMethod
 @PointsTopo
@@ -56,7 +56,7 @@ def addTetrahedronTopology(node,_position=None,_edges=None,_triangles=None,_tetr
 @QuadsTopo
 @HexahedronTopo
 def addHexahedronTopology(node,_position=None,_edges=None,_quads=None,_hexahedra=None,_source=None,**kwargs):
-    _addDynamicTopologyFromString("Hexahedron",node,_source=_source,**kwargs)
+    _addDynamicTopologyFromString("Hexahedron",node,**kwargs)
 
 
 def addDynamicTopology(node,_type:ElementType,**kwargs):
