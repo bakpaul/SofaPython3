@@ -1,4 +1,4 @@
-from NodeWrapper import PrefabMethod
+from core.node_wrapper import PrefabMethod
 from utils import *
 
 @PrefabMethod

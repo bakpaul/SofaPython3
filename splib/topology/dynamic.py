@@ -1,4 +1,4 @@
-from NodeWrapper import *
+from core.node_wrapper import *
 from enum import Enum
 from utils import *
 

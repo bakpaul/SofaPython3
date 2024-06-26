@@ -1,2 +1,2 @@
-from NodeWrapper import PrefabMethod
+from core.node_wrapper import PrefabMethod
 

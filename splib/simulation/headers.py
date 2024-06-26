@@ -1,4 +1,4 @@
-from NodeWrapper import PrefabMethod
+from core.node_wrapper import PrefabMethod
 
 @PrefabMethod
 def setupDefaultHeader(node, _displayFlags = "showVisualModels", _parallelComputing=False,**kwargs):

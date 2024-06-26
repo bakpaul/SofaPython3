@@ -1,1 +1,1 @@
-__all__ = ["NodeWrapper", "Utils"]
+__all__ = ["node_wrapper", "utils"]
