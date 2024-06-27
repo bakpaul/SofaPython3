@@ -7,7 +7,16 @@ def getParameterSet(name : str,parameterSet : Dict) -> Dict:
             return parameterSet[name]
     return {}
 
-
+def MapPotitionnalArgument(paramNumber,objectName,ObjectParam):
+    def MapArg(method):
+        @wraps(method)
+        def wrapper(*args, **kwargs):
+            containerParams = getParameterSet(objectName,kwargs)
+            containerParams[ObjectParam] = args[paramNumber]
+            kwargs[objectName] = containerParams
+            return method(*args,**kwargs)
+        return wrapper
+    return MapArg
 def MapKeywordArg(functionParam,objectName,ObjectParam):
     def MapArg(method):
         @wraps(method)
