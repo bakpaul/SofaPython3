@@ -1,63 +1,72 @@
 from core.utils import *
+from functools import wraps
 
 def BaseTopo(method):
+    @wraps(method)
     def wrapper(*args, **kwargs):
         containerParams = getParameterSet("container",kwargs)
-        if kwargs["_source"]:
+        if ("_source" in kwargs) and kwargs["_source"]:
             containerParams["src"] = kwargs["_source"]
         kwargs["container"] = containerParams
-        method(*args,**kwargs)
+        return method(*args,**kwargs)
+    return wrapper
 
 def PointsTopo(method):
+    @wraps(method)
     def wrapper(*args, **kwargs):
         containerParams = getParameterSet("container",kwargs)
-        if kwargs["_position"]:
+        if ("_position" in kwargs) and kwargs["_position"]:
             containerParams["position"] = kwargs["_position"]
         kwargs["container"] = containerParams
-        method(*args,**kwargs)
-    return wrapper()
+        return method(*args,**kwargs)
+    return wrapper
 
 def EdgesTopo(method):
+    @wraps(method)
     def wrapper(*args, **kwargs):
         containerParams = getParameterSet("container",kwargs)
-        if kwargs["_edges"]:
+        if ("_edges" in kwargs) and kwargs["_edges"]:
             containerParams["edges"] = kwargs["_edges"]
         kwargs["container"] = containerParams
-        method(*args,**kwargs)
-    return wrapper()
+        return method(*args,**kwargs)
+    return wrapper
 
 def TrianglesTopo(method):
+    @wraps(method)
     def wrapper(*args, **kwargs):
         containerParams = getParameterSet("container",kwargs)
-        if kwargs["_triangles"]:
+        if ("_triangles" in kwargs) and kwargs["_triangles"]:
             containerParams["triangles"] = kwargs["_triangles"]
         kwargs["container"] = containerParams
-        method(*args,**kwargs)
-    return wrapper()
+        return method(*args,**kwargs)
+    return wrapper
 
 def QuadsTopo(method):
+    @wraps(method)
     def wrapper(*args, **kwargs):
         containerParams = getParameterSet("container",kwargs)
-        if kwargs["_quads"]:
+        if ("_quads" in kwargs) and kwargs["_quads"]:
             containerParams["quads"] = kwargs["_quads"]
         kwargs["container"] = containerParams
-        method(*args,**kwargs)
-    return wrapper()
+        return method(*args,**kwargs)
+    return wrapper
 
 def TetrahedronTopo(method):
+    @wraps(method)
     def wrapper(*args, **kwargs):
         containerParams = getParameterSet("container",kwargs)
-        if kwargs["_tetrahedra"]:
+        if ("_tetrahedra" in kwargs) and kwargs["_tetrahedra"]:
             containerParams["tetrahedra"] = kwargs["_tetrahedra"]
         kwargs["container"] = containerParams
-        method(*args,**kwargs)
-    return wrapper()
+        return method(*args,**kwargs)
+    return wrapper
 
 def HexahedronTopo(method):
+    @wraps(method)
     def wrapper(*args, **kwargs):
         containerParams = getParameterSet("container",kwargs)
-        if kwargs["_hexahedra"]:
+        if ("_hexahedra" in kwargs) and kwargs["_hexahedra"]:
             containerParams["hexahedra"] = kwargs["_hexahedra"]
         kwargs["container"] = containerParams
-        method(*args,**kwargs)
-    return wrapper()
+        return method(*args,**kwargs)
+    return wrapper

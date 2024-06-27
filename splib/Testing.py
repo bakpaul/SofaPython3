@@ -1,13 +1,44 @@
+from core.node_wrapper import PrefabSimulation
+from topology.dynamic import *
+from simulation.headers import *
+from simulation.ode_solvers import *
+from simulation.linear_solvers import *
 
-def method(self, node, a, **kwargs):
-    print(self)
-    print(node)
-    print(a)
-    print(kwargs)
+class displayNode():
+    def __init__(self,_level=0):
+        self.prefix = ""
+        for i in range(_level):
+            self.prefix += "| "
+
+    def addObject(self,type:str,**kwargs):
+        print(self.prefix + type + " with " + str(kwargs))
+
+    def addChild(self,name:str):
+        print(self.prefix + "-> Node : " + name)
+        return displayNode(len(self.prefix) + 1)
+
+@PrefabSimulation
+def createScene(rootNode):
+
+    setupDefaultHeader(rootNode,requiredPlugins={"pluginName":"['Sofa.Component.Constraint.Projective', 'Sofa.Component.Engine.Select']"})
+
+
+    childNode = rootNode.addChild("simulated1")
+    addExplicitODE(childNode)
+    addLinearSolver(childNode)
+    addPointTopology(childNode,_source="afaeh",container={'src':'agethefa'})
+    childNode.addObject("MechanicalState")
+
+    return rootNode
+
 
 
 if __name__ == "__main__":
-    dict = { "node" : 12, "self" : 1, "a" : "azd", "jnd" : 5 }
-    a = method
-    method(**dict)
-    print(a.__name__)
+    Node = displayNode()
+    createScene(Node)
+
+
+
+
+
+

@@ -154,18 +154,7 @@ class SimulatedObject(ModeledObject):
         obj.node.addObject(mappingType + "Mapping")
 
 
-class displayNode():
-    def __init__(self,_level=0):
-        self.prefix = ""
-        for i in range(_level):
-            self.prefix += "|"
 
-    def addObject(self,type:str,**kwargs):
-        print(self.prefix + type + " with " + str(kwargs))
-
-    def addChild(self,name:str):
-        print(self.prefix + "Node : " + name)
-        return displayNode(len(self.prefix) + 1)
 
 
 if __name__ == "__main__":

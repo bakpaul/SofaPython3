@@ -1,6 +1,7 @@
 from core.node_wrapper import *
 from enum import Enum
-from utils import *
+from topology.utils import *
+from core.utils import MapKeywordArg
 
 # class syntax
 
@@ -19,10 +20,11 @@ def _addDynamicTopologyFromString(elementName:str,node:NodeWrapper,**kwargs):
 
 
 @PrefabMethod
-@BaseTopo
-@PointsTopo
+@MapKeywordArg("_source","container","src")
+@MapKeywordArg("_position","container","position")
 def addPointTopology(node,_position=None,_source=None,**kwargs):
     _addDynamicTopologyFromString("Point",node,**kwargs)
+
 @PrefabMethod
 @BaseTopo
 @PointsTopo

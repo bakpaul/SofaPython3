@@ -5,7 +5,7 @@ def setupDefaultHeader(node, _displayFlags = "showVisualModels", _parallelComput
 
     node.addObject('VisualStyle', displayFlags=_displayFlags)
 
-    node.addObject("RequiredPlugin", pluginName=['Sofa.Component.Constraint.Projective',
+    node.addObject("RequiredPlugin", name="requiredPlugins", pluginName=['Sofa.Component.Constraint.Projective',
                                                  'Sofa.Component.Engine.Select',
                                                  'Sofa.Component.LinearSolver.Direct',
                                                  'Sofa.Component.Mass',
@@ -24,7 +24,7 @@ def setupPenalityCollisionHeader(node,  _displayFlags = "showVisualModels", _sti
 
     node.addObject('VisualStyle', displayFlags=_displayFlags)
 
-    node.addObject("RequiredPlugin", pluginName=['Sofa.Component.Constraint.Projective',
+    node.addObject("RequiredPlugin", name="requiredPlugins", pluginName=['Sofa.Component.Constraint.Projective',
                                                  'Sofa.Component.Engine.Select',
                                                  'Sofa.Component.LinearSolver.Direct',
                                                  'Sofa.Component.Mass',
@@ -54,7 +54,7 @@ def setupLagrangianCollision(node,  _displayFlags = "showVisualModels", _paralle
 
     node.addObject('VisualStyle', displayFlags=_displayFlags)
 
-    node.addObject("RequiredPlugin", pluginName=['Sofa.Component.Constraint.Lagrangian',
+    node.addObject("RequiredPlugin", name="requiredPlugins", pluginName=['Sofa.Component.Constraint.Lagrangian',
                                                  'Sofa.Component.Constraint.Projective',
                                                  'Sofa.Component.Engine.Select',
                                                  'Sofa.Component.LinearSolver.Direct',
