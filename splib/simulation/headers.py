@@ -13,7 +13,8 @@ def setupDefaultHeader(node, _displayFlags = "showVisualModels", _parallelComput
                                                  'Sofa.Component.SolidMechanics.FEM.Elastic',
                                                  'Sofa.Component.StateContainer',
                                                  'Sofa.Component.Topology.Container.Grid',
-                                                 ])
+                                                 ],
+                                                  **kwargs)
     node.addObject('DefaultAnimationLoop',name="animation", parallelODESolving=_parallelComputing, **kwargs)
 
     return node
@@ -32,7 +33,9 @@ def setupPenalityCollisionHeader(node,  _displayFlags = "showVisualModels", _sti
                                                  'Sofa.Component.SolidMechanics.FEM.Elastic',
                                                  'Sofa.Component.StateContainer',
                                                  'Sofa.Component.Topology.Container.Grid',
-                                                 ])
+                                                 ],
+                                                 **kwargs)
+
     node.addObject('DefaultAnimationLoop',name="animation", **kwargs)
 
     node.addObject('CollisionPipeline', name="collisionPipeline", **kwargs)
@@ -63,7 +66,8 @@ def setupLagrangianCollision(node,  _displayFlags = "showVisualModels", _paralle
                                                  'Sofa.Component.SolidMechanics.FEM.Elastic',
                                                  'Sofa.Component.StateContainer',
                                                  'Sofa.Component.Topology.Container.Grid',
-                                                 ])
+                                                 ],
+                                                 **kwargs)
 
 
     node.addObject('FreeMotionAnimationLoop',name="animation",

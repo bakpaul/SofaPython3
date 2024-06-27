@@ -1,8 +1,8 @@
 from core.node_wrapper import PrefabMethod
-from utils import *
+from core.utils import MapKeywordArg
 
 @PrefabMethod
-@BaseTopo
+@MapKeywordArg("_source","container","src")
 def addStaticTopology(node,_source=None,**kwargs):
     node.addObject("MeshTopology", name="container",**kwargs)
 

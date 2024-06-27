@@ -1,6 +1,5 @@
 from core.node_wrapper import *
 from enum import Enum
-from topology.utils import *
 from core.utils import MapKeywordArg
 
 # class syntax
@@ -13,59 +12,65 @@ class ElementType(Enum):
     TETRA       = 5
     HEXA        = 6
 
-def _addDynamicTopologyFromString(elementName:str,node:NodeWrapper,**kwargs):
-    node.addObject(elementName+"SetTopologyModifier", name="modifier",**kwargs)
-    node.addObject(elementName+"SetTopologyContainer", name="container",**kwargs)
-    node.addObject(elementName+"SetGeometryAlgorithms", name="algorithms",**kwargs)
-
 
 @PrefabMethod
 @MapKeywordArg("_source","container","src")
 @MapKeywordArg("_position","container","position")
 def addPointTopology(node,_position=None,_source=None,**kwargs):
-    _addDynamicTopologyFromString("Point",node,**kwargs)
+    node.addObject("PointSetTopologyModifier", name="modifier",**kwargs)
+    node.addObject("PointSetTopologyContainer", name="container",**kwargs)
+    node.addObject("PointSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@BaseTopo
-@PointsTopo
-@EdgesTopo
+@MapKeywordArg("_source","container","src")
+@MapKeywordArg("_position","container","position")
+@MapKeywordArg("_edges","container","edges")
 def addEdgeTopology(node,_position=None,_edges=None,_source=None,**kwargs):
-    _addDynamicTopologyFromString("Edge",node,**kwargs)
+    node.addObject("EdgeSetTopologyModifier", name="modifier",**kwargs)
+    node.addObject("EdgeSetTopologyContainer", name="container",**kwargs)
+    node.addObject("EdgeSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@BaseTopo
-@PointsTopo
-@EdgesTopo
-@TrianglesTopo
+@MapKeywordArg("_source","container","src")
+@MapKeywordArg("_position","container","position")
+@MapKeywordArg("_edges","container","edges")
+@MapKeywordArg("_triangles","container","triangles")
 def addTriangleTopology(node,_position=None,_edges=None,_triangles=None,_source=None,**kwargs):
-    _addDynamicTopologyFromString("Triangle",node,**kwargs)
+    node.addObject("TriangleSetTopologyModifier", name="modifier",**kwargs)
+    node.addObject("TriangleSetTopologyContainer", name="container",**kwargs)
+    node.addObject("TriangleSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@BaseTopo
-@PointsTopo
-@EdgesTopo
-@QuadsTopo
+@MapKeywordArg("_source","container","src")
+@MapKeywordArg("_position","container","position")
+@MapKeywordArg("_edges","container","edges")
+@MapKeywordArg("_quads","container","quads")
 def addQuadTopology(node,_position=None,_edges=None,_quads=None,_source=None,**kwargs):
-    _addDynamicTopologyFromString("Quad",node,**kwargs)
+    node.addObject("QuadSetTopologyModifier", name="modifier",**kwargs)
+    node.addObject("QuadSetTopologyContainer", name="container",**kwargs)
+    node.addObject("QuadSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@BaseTopo
-@PointsTopo
-@EdgesTopo
-@TrianglesTopo
-@TetrahedronTopo
+@MapKeywordArg("_source","container","src")
+@MapKeywordArg("_position","container","position")
+@MapKeywordArg("_edges","container","edges")
+@MapKeywordArg("_triangles","container","triangles")
+@MapKeywordArg("_tetrahedra","container","tetrahedra")
 def addTetrahedronTopology(node,_position=None,_edges=None,_triangles=None,_tetrahedra=None,_source=None,**kwargs):
-    _addDynamicTopologyFromString("Tetrahedron",node,**kwargs)
+    node.addObject("TetrahedronSetTopologyModifier", name="modifier",**kwargs)
+    node.addObject("TetrahedronSetTopologyContainer", name="container",**kwargs)
+    node.addObject("TetrahedronSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@BaseTopo
-@PointsTopo
-@EdgesTopo
-@QuadsTopo
-@HexahedronTopo
+@MapKeywordArg("_source","container","src")
+@MapKeywordArg("_position","container","position")
+@MapKeywordArg("_edges","container","edges")
+@MapKeywordArg("_quads","container","quads")
+@MapKeywordArg("_hexahedra","container","hexahedra")
 def addHexahedronTopology(node,_position=None,_edges=None,_quads=None,_hexahedra=None,_source=None,**kwargs):
-    _addDynamicTopologyFromString("Hexahedron",node,**kwargs)
-
+    node.addObject("HexahedronSetTopologyModifier", name="modifier",**kwargs)
+    node.addObject("HexahedronSetTopologyContainer", name="container",**kwargs)
+    node.addObject("HexahedronSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 def addDynamicTopology(node,_type:ElementType,**kwargs):
 

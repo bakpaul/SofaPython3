@@ -20,8 +20,7 @@ class displayNode():
 @PrefabSimulation
 def createScene(rootNode):
 
-    setupDefaultHeader(rootNode,requiredPlugins={"pluginName":"['Sofa.Component.Constraint.Projective', 'Sofa.Component.Engine.Select']"})
-
+    setupDefaultHeader(rootNode,requiredPlugins={"pluginName":['Sofa.Component.Constraint.Projective', 'Sofa.Component.Engine.Select']})
 
     childNode = rootNode.addChild("simulated1")
     addExplicitODE(childNode)
