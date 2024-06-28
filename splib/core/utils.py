@@ -13,7 +13,7 @@ def MapKeywordArg(functionParam,objectName,ObjectParam):
         @wraps(method)
         def wrapper(*args, **kwargs):
             containerParams = getParameterSet(objectName,kwargs)
-            if (functionParam in kwargs) and kwargs[functionParam]:
+            if (functionParam in kwargs) and not(kwargs[functionParam] is None):
                 containerParams[ObjectParam] = kwargs[functionParam]
             kwargs[objectName] = containerParams
             return method(*args,**kwargs)

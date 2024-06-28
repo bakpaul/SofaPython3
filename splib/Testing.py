@@ -3,6 +3,7 @@ from topology.dynamic import *
 from simulation.headers import *
 from simulation.ode_solvers import *
 from simulation.linear_solvers import *
+from mechanics.linear_elasticity import *
 
 class displayNode():
     def __init__(self,_level=0):
@@ -27,6 +28,7 @@ def createScene(rootNode):
     addLinearSolver(childNode)
     addPointTopology(childNode,_source="afaeh",container={'src':'agethefa'})
     childNode.addObject("MechanicalState")
+    addLinearElasticity(childNode,ElementType.EDGES, _youngModulus=10)
 
     return rootNode
 

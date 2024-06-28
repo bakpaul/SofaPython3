@@ -75,22 +75,22 @@ def addHexahedronTopology(node,_position=None,_edges=None,_quads=None,_hexahedra
 def addDynamicTopology(node,_type:ElementType,**kwargs):
 
     match _type:
-        case ElementType.POINTS.value:
+        case ElementType.POINTS:
             addPointTopology(node,**kwargs)
             return
-        case ElementType.EDGES.value:
+        case ElementType.EDGES:
             addEdgeTopology(node,**kwargs)
             return
-        case ElementType.TRIANGLES.value:
+        case ElementType.TRIANGLES:
             addTriangleTopology(node,**kwargs)
             return
-        case ElementType.QUAT.value:
+        case ElementType.QUAT:
             addQuadTopology(node,**kwargs)
             return
-        case ElementType.TETRA.value:
+        case ElementType.TETRA:
             addTetrahedronTopology(node,**kwargs)
             return
-        case ElementType.HEXA.value:
+        case ElementType.HEXA:
             addHexahedronTopology(node,**kwargs)
             return
         case _:

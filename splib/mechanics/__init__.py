@@ -1,1 +1,1 @@
-__all__ = ["beams","hexaedron","tetrahedron"]
+__all__ = ["linear_elasticity","hyperelasticity","mass"]
