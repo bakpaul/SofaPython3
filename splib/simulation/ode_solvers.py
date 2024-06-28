@@ -3,7 +3,7 @@ from core.node_wrapper import *
 @PrefabMethod
 def addImplicitODE(node,_static=False,**kwargs):
     if(_static):
-        node.addObject("EulerImplicitSolver",name="ODESolver",**kwargs)
+        node.addObject("EulerImplicitSolver",name="ODESolver",rayleighStiffness="0.1", rayleighMass="0.1",**kwargs)
     else:
         node.addObject("StaticSolver",name="ODESolver",**kwargs)
 

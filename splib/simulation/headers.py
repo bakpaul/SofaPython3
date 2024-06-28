@@ -13,6 +13,11 @@ def setupDefaultHeader(node, _displayFlags = "showVisualModels", _parallelComput
                                                  'Sofa.Component.SolidMechanics.FEM.Elastic',
                                                  'Sofa.Component.StateContainer',
                                                  'Sofa.Component.Topology.Container.Grid',
+                                                 'Sofa.Component.IO.Mesh',
+                                                 'Sofa.Component.LinearSolver.Direct',
+                                                 'Sofa.Component.ODESolver.Forward',
+                                                 'Sofa.Component.Topology.Container.Dynamic',
+                                                 'Sofa.Component.Visual',
                                                  ],
                                                   **kwargs)
     node.addObject('DefaultAnimationLoop',name="animation", parallelODESolving=_parallelComputing, **kwargs)
@@ -33,6 +38,11 @@ def setupPenalityCollisionHeader(node,  _displayFlags = "showVisualModels", _sti
                                                  'Sofa.Component.SolidMechanics.FEM.Elastic',
                                                  'Sofa.Component.StateContainer',
                                                  'Sofa.Component.Topology.Container.Grid',
+                                                 'Sofa.Component.IO.Mesh',
+                                                 'Sofa.Component.LinearSolver.Direct',
+                                                 'Sofa.Component.ODESolver.Forward',
+                                                 'Sofa.Component.Topology.Container.Dynamic',
+                                                 'Sofa.Component.Visual',
                                                  ],
                                                  **kwargs)
 
@@ -66,6 +76,11 @@ def setupLagrangianCollision(node,  _displayFlags = "showVisualModels", _paralle
                                                  'Sofa.Component.SolidMechanics.FEM.Elastic',
                                                  'Sofa.Component.StateContainer',
                                                  'Sofa.Component.Topology.Container.Grid',
+                                                 'Sofa.Component.IO.Mesh',
+                                                 'Sofa.Component.LinearSolver.Direct',
+                                                 'Sofa.Component.ODESolver.Forward',
+                                                 'Sofa.Component.Topology.Container.Dynamic',
+                                                 'Sofa.Component.Visual',
                                                  ],
                                                  **kwargs)
 
