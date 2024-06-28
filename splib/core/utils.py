@@ -8,14 +8,15 @@ def getParameterSet(name : str,parameterSet : Dict) -> Dict:
     return {}
 
 
-def MapKeywordArg(functionParam,objectName,ObjectParam):
+def MapKeywordArg(objectName,*argumentMaps):
     def MapArg(method):
         @wraps(method)
         def wrapper(*args, **kwargs):
             containerParams = getParameterSet(objectName,kwargs)
-            if (functionParam in kwargs) and not(kwargs[functionParam] is None):
-                containerParams[ObjectParam] = kwargs[functionParam]
-            kwargs[objectName] = containerParams
+            for argMap in argumentMaps:
+                if (argMap[0] in kwargs) and not(kwargs[argMap[0]] is None):
+                    containerParams[argMap[1]] = kwargs[argMap[0]]
+                kwargs[objectName] = containerParams
             return method(*args,**kwargs)
         return wrapper
     return MapArg

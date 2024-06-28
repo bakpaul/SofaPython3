@@ -4,9 +4,7 @@ from topology.dynamic import ElementType
 
 
 @PrefabMethod
-@MapKeywordArg("_youngModulus","elasticFF","youngModulus")
-@MapKeywordArg("_poissonRatio","elasticFF","poissonRatio")
-@MapKeywordArg("_method","elasticFF","method")
+@MapKeywordArg("elasticFF",["_youngModulus","youngModulus"],["_poissonRatio","poissonRatio"],["_method","method"])
 def addLinearElasticity(node,elem:ElementType,_youngModulus=None, _poissonRatio=None, _method=None,**kwargs):
     match elem:
         case ElementType.EDGES:

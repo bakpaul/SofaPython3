@@ -4,9 +4,7 @@ from topology.dynamic import ElementType
 
 
 @PrefabMethod
-@MapKeywordArg("_materialName","hyperelastic","materialName")
-@MapKeywordArg("_parameterSet","hyperelastic","ParameterSet")
-@MapKeywordArg("_matrixRegularization","hyperelastic","matrixRegularization")
+@MapKeywordArg("hyperelastic",["_materialName","materialName"],["_parameterSet","ParameterSet"],["_matrixRegularization","matrixRegularization"])
 def addHyperelasticity(node,elem:ElementType,_materialName=None, _parameterSet=None, _matrixRegularization=None,**kwargs):
     match elem:
         case ElementType.TETRA:

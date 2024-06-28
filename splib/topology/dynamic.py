@@ -14,59 +14,46 @@ class ElementType(Enum):
 
 
 @PrefabMethod
-@MapKeywordArg("_source","container","src")
-@MapKeywordArg("_position","container","position")
+@MapKeywordArg("container",["_source","src"],["_position","position"])
 def addPointTopology(node,_position=None,_source=None,**kwargs):
     node.addObject("PointSetTopologyModifier", name="modifier",**kwargs)
     node.addObject("PointSetTopologyContainer", name="container",**kwargs)
     node.addObject("PointSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@MapKeywordArg("_source","container","src")
-@MapKeywordArg("_position","container","position")
-@MapKeywordArg("_edges","container","edges")
+@MapKeywordArg("container",["_source","src"],["_position","position"],["_edges","edges"])
 def addEdgeTopology(node,_position=None,_edges=None,_source=None,**kwargs):
     node.addObject("EdgeSetTopologyModifier", name="modifier",**kwargs)
     node.addObject("EdgeSetTopologyContainer", name="container",**kwargs)
     node.addObject("EdgeSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@MapKeywordArg("_source","container","src")
-@MapKeywordArg("_position","container","position")
-@MapKeywordArg("_edges","container","edges")
-@MapKeywordArg("_triangles","container","triangles")
+@MapKeywordArg("container",["_source","src"],["_position","position"],["_edges","edges"]
+                          ,["_triangles","triangles"])
 def addTriangleTopology(node,_position=None,_edges=None,_triangles=None,_source=None,**kwargs):
     node.addObject("TriangleSetTopologyModifier", name="modifier",**kwargs)
     node.addObject("TriangleSetTopologyContainer", name="container",**kwargs)
     node.addObject("TriangleSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@MapKeywordArg("_source","container","src")
-@MapKeywordArg("_position","container","position")
-@MapKeywordArg("_edges","container","edges")
-@MapKeywordArg("_quads","container","quads")
+@MapKeywordArg("container",["_source","src"],["_position","position"],["_edges","edges"]
+                          ,["_quads","quads"])
 def addQuadTopology(node,_position=None,_edges=None,_quads=None,_source=None,**kwargs):
     node.addObject("QuadSetTopologyModifier", name="modifier",**kwargs)
     node.addObject("QuadSetTopologyContainer", name="container",**kwargs)
     node.addObject("QuadSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@MapKeywordArg("_source","container","src")
-@MapKeywordArg("_position","container","position")
-@MapKeywordArg("_edges","container","edges")
-@MapKeywordArg("_triangles","container","triangles")
-@MapKeywordArg("_tetrahedra","container","tetrahedra")
+@MapKeywordArg("container",["_source","src"],["_position","position"],["_edges","edges"]
+                          ,["_triangles","triangles"],["_tetrahedra","tetrahedra"])
 def addTetrahedronTopology(node,_position=None,_edges=None,_triangles=None,_tetrahedra=None,_source=None,**kwargs):
     node.addObject("TetrahedronSetTopologyModifier", name="modifier",**kwargs)
     node.addObject("TetrahedronSetTopologyContainer", name="container",**kwargs)
     node.addObject("TetrahedronSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@MapKeywordArg("_source","container","src")
-@MapKeywordArg("_position","container","position")
-@MapKeywordArg("_edges","container","edges")
-@MapKeywordArg("_quads","container","quads")
-@MapKeywordArg("_hexahedra","container","hexahedra")
+@MapKeywordArg("container",["_source","src"],["_position","position"],["_edges","edges"]
+                          ,["_quads","quads"],["_hexahedra","hexahedra"])
 def addHexahedronTopology(node,_position=None,_edges=None,_quads=None,_hexahedra=None,_source=None,**kwargs):
     node.addObject("HexahedronSetTopologyModifier", name="modifier",**kwargs)
     node.addObject("HexahedronSetTopologyContainer", name="container",**kwargs)
