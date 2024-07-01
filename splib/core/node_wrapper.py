@@ -4,9 +4,18 @@ from functools import wraps
 # (enabling to pass dictionary fixing params) without wanting to use a full PrefabSimulation
 
 
-class NodeWrapper(object):
-    def __init__(self,_node):
-        self.node = _node
+class BasePrefab(object):
+
+    def __init__(self,node):
+        self.node = node
+
+    def __getattr__(self, item):
+        return getattr(self.node,item)
+
+
+class ObjectWrapper(BasePrefab):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
 
     def addObject(self,*args, **kwargs):
         parameters = {}
@@ -27,33 +36,28 @@ class NodeWrapper(object):
 
         return self.node.addObject(*args,**parameters)
 
-    def __getattr__(self, item):
-        return getattr(self.node,item)
 
-class PrefabNode(NodeWrapper):
-    def __init__(self,_node):
-        self.node = _node
 
+
+class ChildWrapper(ObjectWrapper):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+
+    # This method enforces that the object that is created by the addChild method keeps the prefab type
     def addChild(self,*args, **kwargs):
         child = self.node.addChild(*args,**kwargs)
-        return PrefabNode(child)
+        returnObject =  self.__new__(type(self))
+        returnObject.__init__(child)
+        return returnObject
 
-    def __getattr__(self, item):
-        return getattr(self.node,item)
 
-def PrefabSimulation(method):
-    @wraps(method)
-    def wrapper(*args, **kwargs):
-        if len(args)>1:
-            return method(PrefabNode(args[0]),*args[1:],**kwargs)
-        else:
-            return method(PrefabNode(args[0]),**kwargs)
-    return wrapper
+
+
 def PrefabMethod(method):
     @wraps(method)
     def wrapper(*args, **kwargs):
         if len(args)>1:
-            return method(NodeWrapper(args[0]),*args[1:],**kwargs)
+            return method(ObjectWrapper(args[0]),*args[1:],**kwargs)
         else:
-            return method(NodeWrapper(args[0]),**kwargs)
+            return method(ObjectWrapper(args[0]),**kwargs)
     return wrapper

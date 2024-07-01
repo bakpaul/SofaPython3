@@ -1,4 +1,4 @@
-from core.node_wrapper import PrefabSimulation
+from prefabs.utils import PrefabSimulation
 from topology.dynamic import *
 from simulation.headers import *
 from simulation.ode_solvers import *
@@ -56,11 +56,12 @@ def createScene(rootNode):
                                                                'Sofa.Component.Visual']})
 
 
-    childNode = rootNode.addChild("simulated1")
+    childNode = rootNode.addSimulatedObject("simulated1")
+
 
     ## TODO : Being able to call "childNode.addAnything" by using the __getattr__ method
     loadMesh(childNode,_filename="mesh/liver.msh")
-    addExplicitODE(childNode)
+    addImplicitODE(childNode)
     addLinearSolver(childNode,_iterative=True,_iterations="25", _tolerance="1e-09", _threshold="1e-09")
     addDynamicTopology(childNode,_type=ElementType.TETRA,_source="@meshLoader")
     childNode.addObject("MechanicalObject")
