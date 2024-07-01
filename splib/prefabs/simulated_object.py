@@ -86,16 +86,19 @@ class SimulatedObject(BasePrefab):
         return
 
     def addVisualModel(self,_mappingType=MappingType.BARYCENTRIC,extractSurfaceFromParent=False,_filename=None):
-        if(extractSurfaceFromParent and (_filename is no None)):
+        if(extractSurfaceFromParent and (_filename is not None)):
             print("[Warning] You have to choose between extraction and mesh loading")
 
         if(extractSurfaceFromParent):
             if(self.elemType == ElementType.TETRA):
                 ##Add tetra2Triangles
-            elif(self.elemType == ElementType.HEXA)
+                return
+            elif(self.elemType == ElementType.HEXA):
                 ##Add Hexa2Quads
+                return
         else:
             ##USe OGL Model
+            return
         return
 
     def addCollisionModel(self):
