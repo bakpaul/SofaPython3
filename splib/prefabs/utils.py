@@ -27,3 +27,4 @@ def PrefabSimulation(method):
         else:
             return method(RootWrapper(args[0]),**kwargs)
     return wrapper
+
