@@ -12,34 +12,45 @@ class SolverType(Enum):
     DIRECT    = 1
     ITERATIVE = 2
 
-class LinearSolverParams(object):
+class MappingType(Enum):
+    BARYCENTRIC = 1
+    IDENTITY    = 2
+    RIGID       = 3
+
+class LinearSolverParameters(object):
     def __init__(self, _template=None):
         self._template=_template
 
-class IterativeLinearSolverParams(LinearSolverParams):
+class IterativeLinearSolverParameters(LinearSolverParameters):
     def __init__(self, _iterations=None,_tolerance=None,_threshold=None,_template=None):
         self.super().__init__(_template)
         self._iterations=_iterations
         self._tolerance=_tolerance
         self._threshold=_threshold
 
-class ConstitutiveLawParams(object):
+class ConstitutiveLawParameters(object):
     def __init__(self):
         return
-class LinearConstitutiveLawParams(ConstitutiveLawParams):
+class HyperelasticConstitutiveLawParameters(ConstitutiveLawParameters):
     def __init__(self, _materialName=None, _parameterSet=None, _matrixRegularization=None):
         self._materialName=_materialName
         self._parameterSet=_parameterSet
         self._matrixRegularization=_matrixRegularization
 
-class HyperelasticConstitutiveLawParams(ConstitutiveLawParams):
+class LinearConstitutiveLawParameters(ConstitutiveLawParameters):
     def __init__(self, _youngModulus=None, _poissonRatio=None, _method=None):
         self._youngModulus=_youngModulus
         self._poissonRatio=_poissonRatio
         self._method=_method
 
-class MassParams(object):
+class MassParameters(object):
     def __init__(self,_totalMass=None, _massDensity=None):
         self._totalMass=_totalMass
         self._massDensity=_massDensity
 
+class FixationParameters(object):
+    def __init__(self,_boxROIs=None, _sphereROIs=None, _indices=None, _fixAll=None):
+        self._boxROIs=_boxROIs
+        self._sphereROIs=_sphereROIs
+        self._indices=_indices
+        self._fixAll=_fixAll

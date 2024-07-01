@@ -7,15 +7,15 @@ class RootWrapper(ChildWrapper):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
 
-    def addSimulatedObject(self,*args,**kwargs):
-        child = self.node.addChild(*args,**kwargs)
+    def addSimulatedObject(self,name,*args,**kwargs):
+        child = self.node.addChild(name)
         ## We need to wrap the child passed to the prefab object to enforce the mechanism of "addChild"
-        return SimulatedObject(RootWrapper(child))
+        return SimulatedObject(RootWrapper(child),*args,**kwargs)
 
-    def addNonMechanicalObject(self,*args,**kwargs):
-        child = self.node.addChild(*args,**kwargs)
+    def addNonMechanicalObject(self,name,*args,**kwargs):
+        child = self.node.addChild(name)
         ## We need to wrap the child passed to the prefab object to enforce the mechanism of "addChild"
-        return NonMechanicalObject(RootWrapper(child))
+        return NonMechanicalObject(RootWrapper(child),*args,**kwargs)
 
 
 

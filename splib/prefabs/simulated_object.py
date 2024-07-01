@@ -9,6 +9,8 @@ from mechanics.linear_elasticity import *
 from mechanics.mass import *
 from mechanics.fix_points import *
 from topology.loader import *
+from topology.dynamic import *
+from topology.static import *
 
 class SimulatedObject(BasePrefab):
 
@@ -24,7 +26,7 @@ class SimulatedObject(BasePrefab):
     def __init__(self, node,
                  _template, _elemType:ElementType,
                  _ODEType=ODEType.IMPLICIT, _SolverType=SolverType.DIRECT, _dynamicTopo=False,
-                 _linearSolverParams=LinearSolverParams(),
+                 _linearSolverParams=LinearSolverParameters(),
                  _filename=None, _source=None,
                  *args,**kwargs):
 
@@ -33,12 +35,12 @@ class SimulatedObject(BasePrefab):
         self.elemType = _elemType
 
         if(_ODEType == ODEType.IMPLICIT):
-            addImplicitODE(self.node,**kwargs)
+            addImplicitODE(self.node,_static=False,**kwargs)
         else:
             addExplicitODE(self.node,**kwargs)
 
 
-        addLinearSolver(self.node,_iterative=(_SolverType == SolverType.DIRECT),**(_linearSolverParams.__dict__),**kwargs)
+        addLinearSolver(self.node,_iterative=(_SolverType == SolverType.ITERATIVE),**(_linearSolverParams.__dict__),**kwargs)
 
         if((_source is not None) and (_filename is not None)):
             print("[Error] you cannot have multiple sources for your topology")
@@ -55,35 +57,37 @@ class SimulatedObject(BasePrefab):
             addStaticTopology(self.node,_source=topoSrc,**kwargs)
 
         mstateParams = getParameterSet("mstate",kwargs)
-        self.node.addObject("MechanicalObject",name="mstate", template=_template, **mstateParams)
+        self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=_template, **mstateParams)
 
 
 
     def addConstitutiveModel(self,
                              law:ConstitutiveLaw=None,
-                             lawParams=ConstitutiveLawParams(),
-                             massParams=MassParams(),
+                             lawParams=ConstitutiveLawParameters(),
+                             massParams=MassParameters(),
                              **kwargs):
         ##ADD selasticity
         ## ADD Mass
         if(law==ConstitutiveLaw.LINEAR_COROT):
-            addLinearElasticity(self.node,**(lawParams.__dict__),**kwargs)
+            addLinearElasticity(self.node,self.elemType,**(lawParams.__dict__),**kwargs)
         else:
-            addHyperelasticity(self.node,**(lawParams.__dict__),**kwargs)
+            addHyperelasticity(self.node,self.elemType,**(lawParams.__dict__),**kwargs)
 
         if(not(massParams.__dict__ == {})):
             addMass(self.node,**(massParams.__dict__),**kwargs)
 
         return
 
-    def addDirichletConditions(self):
-        ##ADD selasticity
-        ## ADD Mass
+    def addDirichletConditions(self,
+                               constraintType = ConstraintType.PROJECTIVE,
+                               fixationParams=FixationParameters(),
+                               **kwargs):
+        addFixation(self.node,constraintType,**(fixationParams.__dict__),**kwargs)
         return
 
-    def addMapping(self):
-        return
-    def addVisualModel(self):
+    def addVisualModel(self,_mappingType=MappingType.BARYCENTRIC,_filename=None,exctractSurfaceFromParent=False):
+
+
         return
 
     def addCollisionModel(self):

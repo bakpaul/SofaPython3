@@ -9,3 +9,9 @@
 
 --- NEW SESSION: 28/06/2024 18:11:25 ---
 /simulated1/MechanicalObject.showColor = 1 1 1 1
+
+--- NEW SESSION: 01/07/2024 17:30:34 ---
+/Liver2/fixedBoxROI.drawBoxes = 1
+
+--- NEW SESSION: 01/07/2024 17:31:47 ---
+/Liver2/fixedBoxROI.drawBoxes = 1

@@ -1,4 +1,5 @@
 from prefabs.utils import PrefabSimulation
+from prefabs.parameters import *
 from topology.dynamic import *
 from simulation.headers import *
 from simulation.ode_solvers import *
@@ -56,18 +57,27 @@ def createScene(rootNode):
                                                                'Sofa.Component.Visual']})
 
 
-    childNode = rootNode.addSimulatedObject("simulated1")
+    # childNode = rootNode.addChild("simulated1")
+    #
+    #
+    # ## TODO : Being able to call "childNode.addAnything" by using the __getattr__ method
+    # loadMesh(childNode,_filename="mesh/liver.msh")
+    # addImplicitODE(childNode)
+    # addLinearSolver(childNode,_iterative=True,_iterations="25", _tolerance="1e-09", _threshold="1e-09")
+    # addDynamicTopology(childNode,_type=ElementType.TETRA,_source="@meshLoader")
+    # childNode.addObject("MechanicalObject")
+    # addLinearElasticity(childNode,ElementType.TETRA, _poissonRatio="0.3", _youngModulus="3000", _method='large')
+    # addMass(childNode,_massDensity="1.0")
+    # addFixation(childNode,ConstraintType.PROJECTIVE,_indices="3 39 64")
 
+    childNode2 = rootNode.addSimulatedObject("Liver2",_template="Vec3d",_elemType=ElementType.TETRA,_filename="mesh/liver.msh")
+    childNode2.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
+                                    lawParams=LinearConstitutiveLawParameters(_poissonRatio="0.3", _youngModulus="3000", _method='large'),
+                                    massParams=MassParameters(_massDensity="1.0"))
+    childNode2.addDirichletConditions(ConstraintType.PROJECTIVE,
+                                      fixationParams=FixationParameters(_boxROIs=[0, 3, 0, 2, 5, 2]))
 
-    ## TODO : Being able to call "childNode.addAnything" by using the __getattr__ method
-    loadMesh(childNode,_filename="mesh/liver.msh")
-    addImplicitODE(childNode)
-    addLinearSolver(childNode,_iterative=True,_iterations="25", _tolerance="1e-09", _threshold="1e-09")
-    addDynamicTopology(childNode,_type=ElementType.TETRA,_source="@meshLoader")
-    childNode.addObject("MechanicalObject")
-    addLinearElasticity(childNode,ElementType.TETRA, _poissonRatio="0.3", _youngModulus="3000", _method='large')
-    addMass(childNode,_massDensity="1.0")
-    addFixation(childNode,ConstraintType.PROJECTIVE,_indices="3 39 64")
+    # childNode2.addDirichletConditions(law=ConstitutiveLaw.LINEAR_COROT,lawParams=LinearConstitutiveLawParams(_poissonRatio="0.3", _youngModulus="3000", _method='large'))
 
 
     ## EQUIVALENT TO
