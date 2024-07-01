@@ -43,7 +43,7 @@ class SimulatedObject(BasePrefab):
         addLinearSolver(self.node,_iterative=(_SolverType == SolverType.ITERATIVE),**(_linearSolverParams.__dict__),**kwargs)
 
         if((_source is not None) and (_filename is not None)):
-            print("[Error] you cannot have multiple sources for your topology")
+            print("[Warning] you cannot have multiple sources for your topology, taking filename")
 
         if(_filename is not None):
             loadMesh(self.node,_filename, **kwargs)
@@ -85,9 +85,17 @@ class SimulatedObject(BasePrefab):
         addFixation(self.node,constraintType,**(fixationParams.__dict__),**kwargs)
         return
 
-    def addVisualModel(self,_mappingType=MappingType.BARYCENTRIC,_filename=None,exctractSurfaceFromParent=False):
+    def addVisualModel(self,_mappingType=MappingType.BARYCENTRIC,extractSurfaceFromParent=False,_filename=None):
+        if(extractSurfaceFromParent and (_filename is no None)):
+            print("[Warning] You have to choose between extraction and mesh loading")
 
-
+        if(extractSurfaceFromParent):
+            if(self.elemType == ElementType.TETRA):
+                ##Add tetra2Triangles
+            elif(self.elemType == ElementType.HEXA)
+                ##Add Hexa2Quads
+        else:
+            ##USe OGL Model
         return
 
     def addCollisionModel(self):
