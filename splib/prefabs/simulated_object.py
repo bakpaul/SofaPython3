@@ -71,7 +71,7 @@ class SimulatedObject(BasePrefab):
         else:
             addHyperelasticity(self.node,**(lawParams.__dict__),**kwargs)
 
-        if((totalMass is not None) or (massDensity is not None)):
+        if(not(massParams.__dict__ == {})):
             addMass(self.node,**(massParams.__dict__),**kwargs)
 
         return
