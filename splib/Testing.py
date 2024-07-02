@@ -57,10 +57,10 @@ def createScene(rootNode):
                                                                'Sofa.Component.Visual']})
 
 
-    # childNode = rootNode.addChild("simulated1")
     #
     #
     # ## TODO : Being able to call "childNode.addAnything" by using the __getattr__ method
+    # childNode = rootNode.addChild("simulated1")
     # loadMesh(childNode,_filename="mesh/liver.msh")
     # addImplicitODE(childNode)
     # addLinearSolver(childNode,_iterative=True,_iterations="25", _tolerance="1e-09", _threshold="1e-09")
@@ -77,24 +77,6 @@ def createScene(rootNode):
     childNode2.addDirichletConditions(ConstraintType.PROJECTIVE,
                                       fixationParams=FixationParameters(_boxROIs=[0, 3, 0, 2, 5, 2]))
 
-    # childNode2.addDirichletConditions(law=ConstitutiveLaw.LINEAR_COROT,lawParams=LinearConstitutiveLawParams(_poissonRatio="0.3", _youngModulus="3000", _method='large'))
-
-
-    ## EQUIVALENT TO
-    # rootNode.addObject("VisualStyle",displayFlags="showVisualModels")
-    # rootNode.addObject("RequiredPlugin",name="requiredPlugins",pluginName="['Sofa.Component.Constraint.Projective', 'Sofa.Component.Engine.Select', 'Sofa.Component.LinearSolver.Direct', 'Sofa.Component.Mass', 'Sofa.Component.ODESolver.Backward', 'Sofa.Component.SolidMechanics.FEM.Elastic', 'Sofa.Component.StateContainer', 'Sofa.Component.Topology.Container.Grid', 'Sofa.Component.IO.Mesh', 'Sofa.Component.LinearSolver.Direct', 'Sofa.Component.Topology.Container.Dynamic', 'Sofa.Component.Visual']")
-    # rootNode.addObject("DefaultAnimationLoop",name="animation",parallelODESolving="False")
-    # simulated1=rootNode.addChild(simulated1)
-    # simulated1.addObject("MeshGmshLoader",name="meshLoader",filename="mesh/liver.msh")
-    # simulated1.addObject("EulerExplicitSolver",name="ODESolver")
-    # simulated1.addObject("CGLinearSolver",name="LinearSolver",iterations="25",tolerance="1e-09",threshold="1e-09")
-    # simulated1.addObject("TetrahedronSetTopologyModifier",name="modifier")
-    # simulated1.addObject("TetrahedronSetTopologyContainer",name="container",src="@meshLoader")
-    # simulated1.addObject("TetrahedronSetGeometryAlgorithms",name="algorithms")
-    # simulated1.addObject("MechanicalObject")
-    # simulated1.addObject("TetrahedronFEMForceField",name="elasticFF",youngModulus="3000",poissonRatio="0.3",method="large")
-    # simulated1.addObject("MeshMatrixMass",name="mass",massDensity="1.0")
-    # simulated1.addObject("FixedProjectiveConstraint",name="fixedConstraints",indices="3 39 64")
     return rootNode
 
 

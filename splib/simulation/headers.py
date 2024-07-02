@@ -47,11 +47,8 @@ def setupPenalityCollisionHeader(node,  _displayFlags = "showVisualModels", _sti
                                                  **kwargs)
 
     node.addObject('DefaultAnimationLoop',name="animation", **kwargs)
-
     node.addObject('CollisionPipeline', name="collisionPipeline", **kwargs)
-
     node.addObject('BruteForceBroadPhase', name="broadPhase", **kwargs)
-
     node.addObject('BVHNarrowPhase',  name="narrowPhase", **kwargs)
 
     if(_stick):

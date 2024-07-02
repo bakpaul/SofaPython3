@@ -1,6 +1,6 @@
 from core.node_wrapper import ChildWrapper
 from prefabs.simulated_object import SimulatedObject
-from prefabs.non_mechanical_object import NonMechanicalObject
+from prefabs.non_simulated_object import NonSimulatedObject
 from functools import wraps
 
 class RootWrapper(ChildWrapper):
@@ -12,10 +12,10 @@ class RootWrapper(ChildWrapper):
         ## We need to wrap the child passed to the prefab object to enforce the mechanism of "addChild"
         return SimulatedObject(RootWrapper(child),*args,**kwargs)
 
-    def addNonMechanicalObject(self,name,*args,**kwargs):
+    def addNonSimulatedObject(self,name,*args,**kwargs):
         child = self.node.addChild(name)
         ## We need to wrap the child passed to the prefab object to enforce the mechanism of "addChild"
-        return NonMechanicalObject(RootWrapper(child),*args,**kwargs)
+        return NonSimulatedObject(RootWrapper(child),*args,**kwargs)
 
 
 
