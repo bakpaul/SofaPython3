@@ -8,7 +8,7 @@ class ElementType(Enum):
     POINTS      = 1
     EDGES       = 2
     TRIANGLES   = 3
-    QUAT        = 4
+    QUAD        = 4
     TETRA       = 5
     HEXA        = 6
 
@@ -59,9 +59,9 @@ def addHexahedronTopology(node,position=None,edges=None,quads=None,hexahedra=Non
     node.addObject("HexahedronSetTopologyContainer", name="container",**kwargs)
     node.addObject("HexahedronSetGeometryAlgorithms", name="algorithms",**kwargs)
 
-def addDynamicTopology(node,_type:ElementType,**kwargs):
+def addDynamicTopology(node,type:ElementType,**kwargs):
 
-    match _type:
+    match type:
         case ElementType.POINTS:
             addPointTopology(node,**kwargs)
             return
@@ -71,7 +71,7 @@ def addDynamicTopology(node,_type:ElementType,**kwargs):
         case ElementType.TRIANGLES:
             addTriangleTopology(node,**kwargs)
             return
-        case ElementType.QUAT:
+        case ElementType.QUAD:
             addQuadTopology(node,**kwargs)
             return
         case ElementType.TETRA:
@@ -81,5 +81,5 @@ def addDynamicTopology(node,_type:ElementType,**kwargs):
             addHexahedronTopology(node,**kwargs)
             return
         case _:
-            print('Topology type should be one of the following : "ElementType.POINTS, ElementType.EDGES, ElementType.TRIANGLES, ElementType.QUAT, ElementType.TETRA, ElementType.HEXA" ')
+            print('Topology type should be one of the following : "ElementType.POINTS, ElementType.EDGES, ElementType.TRIANGLES, ElementType.QUAD, ElementType.TETRA, ElementType.HEXA" ')
             return

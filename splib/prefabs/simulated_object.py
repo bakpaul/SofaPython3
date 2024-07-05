@@ -5,7 +5,7 @@ from prefabs.parameters  import *
 from simulation.headers import *
 from simulation.ode_solvers import *
 from simulation.linear_solvers import *
-from simulation.collision_model import *
+from mechanics.collision_model import *
 from mechanics.linear_elasticity import *
 from mechanics.mass import *
 from mechanics.fix_points import *
@@ -27,9 +27,12 @@ class SimulatedObject(BasePrefab):
     def __init__(self, node,
                  template, elemType:ElementType,
                  ODEType=ODEType.IMPLICIT, SolverType=SolverType.DIRECT, dynamicTopo=False,
-                 linearSolverParams=LinearSolverParameters(),
+                 linearSolverParams=LinearSolverParameters(), collisionType=CollisionType.NONE,
                  filename=None, source=None,
                  *args,**kwargs):
+        global scene_collisionType
+        if(not(collisionType == CollisionType.NONE)):
+            collisionType = scene_collisionType
 
         super().__init__(node,*args,**kwargs)
         self.template = template
@@ -60,6 +63,10 @@ class SimulatedObject(BasePrefab):
 
         mstateParams = getParameterSet("mstate",kwargs)
         self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=template, **mstateParams)
+
+        if(collisionType == CollisionType.LAGRANGIAN):
+            self.mechanicalObject = self.node.addObject("LinearSolverConstraintCorrection",name="constraintCorrection", **kwargs)
+
 
 
 
@@ -99,23 +106,26 @@ class SimulatedObject(BasePrefab):
                 addDynamicTopology(node,visualElemInFile,source="@meshLoader",**kwargs)
         elif(extractSurfaceFromParent):
             if(parentElemType == ElementType.TETRA):
+                addDynamicTopology(node,ElementType.TRIANGLES,**kwargs)
                 node.addObject("Tetra2TriangleTopologicalMapping", name="TopologicalMapping",  input="@../container", output="@container",**kwargs)
                 return
             elif(parentElemType == ElementType.HEXA):
+                addDynamicTopology(node,ElementType.QUAD,**kwargs)
                 node.addObject("Hexa2QuadTopologicalMapping", name="TopologicalMapping",  input="@../container", output="@container",**kwargs)
                 return
 
 
-    def addVisualModel(self,extractSurfaceFromParent=False,filename=None,elemTypeInFile:ElementType=None,**kwargs):
+    @MapKeywordArg("OglModel",["color","color"])
+    def addVisualModel(self,color=None,extractSurfaceFromParent=False,filename=None,elemTypeInFile:ElementType=None,**kwargs):
         if(extractSurfaceFromParent and (filename is not None)):
             print("[Warning] You have to choose between extraction and mesh loading")
         elif(not(extractSurfaceFromParent) and (filename is None)):
             print("[Error] You should specify either a surface extraction of a filename, the surface will be extracted by default. ")
             extractSurfaceFromParent = True
 
-        self.visualModel = self.addchild("VisualModel")
+        self.visualModel = self.node.addChild("VisualModel")
         SimulatedObject._addMappedSurface( self.visualModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,filename=filename,visualElemInFile=elemTypeInFile,**kwargs)
-        self.visualModel.addObject("OglModel", name="OglModel",  topology="@container")
+        self.visualModel.addObject("OglModel", name="OglModel",  topology="@container",**kwargs)
 
         if(filename is not None):
             if(self.template == "Rigid3"):
@@ -133,8 +143,14 @@ class SimulatedObject(BasePrefab):
             print("[Error] You should specify either a surface extraction of a filename, the surface will be extracted by default. ")
             extractSurfaceFromParent = True
 
-        self.collisionModel = self.addchild("CollisionModel")
+        self.collisionModel = self.node.addChild("CollisionModel")
         SimulatedObject._addMappedSurface( self.collisionModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,filename=filename,visualElemInFile=elemTypeInFile,**kwargs)
+        if(extractSurfaceFromParent):
+            self.collisionModel.addObject("MechanicalObject",name="mstate",rest_position="@../mstate.rest_position")
+        else:
+            self.collisionModel.addObject("MechanicalObject",name="mstate",src="@container")
+
+
         addCollisionModels( self.collisionModel,**(collisionParameters.__dict__),**kwargs)
 
 

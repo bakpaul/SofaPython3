@@ -43,7 +43,7 @@ def createScene(rootNode):
     rootNode.dt = 0.02
     rootNode.gravity = [0,-9.81,0]
 
-    setupDefaultHeader(rootNode,requiredPlugins={"pluginName":['Sofa.Component.Constraint.Projective',
+    setupLagrangianCollision(rootNode,requiredPlugins={"pluginName":['Sofa.Component.Constraint.Projective',
                                                                'Sofa.Component.Engine.Select',
                                                                'Sofa.Component.LinearSolver.Direct',
                                                                'Sofa.Component.Mass',
@@ -64,19 +64,20 @@ def createScene(rootNode):
     # loadMesh(childNode,filename="mesh/liver.msh")
     # addImplicitODE(childNode)
     # addLinearSolver(childNode,iterative=True,iterations="25", tolerance="1e-09", threshold="1e-09")
-    # addDynamicTopology(childNode,_type=ElementType.TETRA,source="@meshLoader")
+    # addDynamicTopology(childNode,type=ElementType.TETRA,source="@meshLoader")
     # childNode.addObject("MechanicalObject")
     # addLinearElasticity(childNode,ElementType.TETRA, poissonRatio="0.3", youngModulus="3000", method='large')
     # addMass(childNode,massDensity="1.0")
     # addFixation(childNode,ConstraintType.PROJECTIVE,indices="3 39 64")
 
-    childNode2 = rootNode.addSimulatedObject("Liver2",template="Vec3d",_elemType=ElementType.TETRA,filename="mesh/liver.msh")
+    childNode2 = rootNode.addSimulatedObject("Liver2",template="Vec3d",elemType=ElementType.TETRA,filename="mesh/liver.msh")
     childNode2.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
                                     lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
                                     massParams=MassParameters(massDensity="1.0"))
     childNode2.addDirichletConditions(ConstraintType.PROJECTIVE,
                                       fixationParams=FixationParameters(boxROIs=[0, 3, 0, 2, 5, 2]))
-
+    childNode2.addVisualModel(color=[1.0,1.0,0.2],extractSurfaceFromParent=True)
+    childNode2.addCollisionModel(collisionParameters =CollisionParameters(points=True,edges=True,triangles=True,proximity=0.2),extractSurfaceFromParent=True)
     return rootNode
 
 

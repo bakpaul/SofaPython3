@@ -7,12 +7,12 @@ from topology.static import *
 
 class NonSimulatedObject(BasePrefab):
     def __init__(self, node,
-                 template, _elemType:ElementType=None,_dynamicTopo=False,filename=None, source=None,*args,**kwargs):
+                 template, elemType:ElementType=None,_dynamicTopo=False,filename=None, source=None,*args,**kwargs):
         super().__init__(node,*args,**kwargs)
 
-        if(_elemType is not None):
+        if(elemType is not None):
             if((source is not None) and (filename is not None)):
-            print("[Warning] you cannot have multiple sources for your topology, taking filename")
+                print("[Warning] you cannot have multiple sources for your topology, taking filename")
 
             if(filename is not None):
                 loadMesh(self.node,filename, **kwargs)

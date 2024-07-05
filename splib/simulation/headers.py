@@ -1,7 +1,16 @@
 from core.node_wrapper import PrefabMethod
+from enum import Enum
+
+class CollisionType(Enum):
+    NONE = 1
+    PENALITY = 2
+    LAGRANGIAN = 3
+
 
 @PrefabMethod
 def setupDefaultHeader(node, displayFlags = "showVisualModels", parallelComputing=False,**kwargs):
+    global scene_collisionType
+    scene_collisionType = CollisionType.NONE
 
     node.addObject('VisualStyle', displayFlags=displayFlags)
 
@@ -27,7 +36,8 @@ def setupDefaultHeader(node, displayFlags = "showVisualModels", parallelComputin
 
 @PrefabMethod
 def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels", stick=False, **kwargs):
-
+    global scene_collisionType
+    scene_collisionType = CollisionType.PENALITY
     node.addObject('VisualStyle', displayFlags=displayFlags)
 
     node.addObject("RequiredPlugin", name="requiredPlugins", pluginName=['Sofa.Component.Constraint.Projective',
@@ -61,7 +71,8 @@ def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels", stick
 
 @PrefabMethod
 def setupLagrangianCollision(node,  displayFlags = "showVisualModels", parallelComputing=False, stick=False, frictionCoef=0.0, tolerance=0.0, maxIterations=100, **kwargs):
-
+    global scene_collisionType
+    scene_collisionType = CollisionType.LAGRANGIAN
     node.addObject('VisualStyle', displayFlags=displayFlags)
 
     node.addObject("RequiredPlugin", name="requiredPlugins", pluginName=['Sofa.Component.Constraint.Lagrangian',

@@ -13,7 +13,7 @@ def addLinearElasticity(node,elem:ElementType,youngModulus=None, poissonRatio=No
         case ElementType.TRIANGLES:
             node.addObject("TriangleFEMForceField",name="constitutiveLaw",**kwargs)
             return
-        case ElementType.QUAT:
+        case ElementType.QUAD:
             node.addObject("QuadBendingFEMForceField",name="constitutiveLaw",**kwargs)
             return
         case ElementType.TETRA:
