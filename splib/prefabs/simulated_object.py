@@ -5,6 +5,7 @@ from prefabs.parameters  import *
 from simulation.headers import *
 from simulation.ode_solvers import *
 from simulation.linear_solvers import *
+from simulation.collision_model import *
 from mechanics.linear_elasticity import *
 from mechanics.mass import *
 from mechanics.fix_points import *
@@ -34,6 +35,7 @@ class SimulatedObject(BasePrefab):
         self.template = _template
         self.elemType = _elemType
 
+
         if(_ODEType == ODEType.IMPLICIT):
             addImplicitODE(self.node,_static=False,**kwargs)
         else:
@@ -52,7 +54,7 @@ class SimulatedObject(BasePrefab):
             topoSrc = _source
 
         if(_dynamicTopo):
-            addDynamicTopology(self.node,_source=topoSrc,**kwargs)
+            addDynamicTopology(self.node,self.elemType,_source=topoSrc,**kwargs)
         else:
             addStaticTopology(self.node,_source=topoSrc,**kwargs)
 
@@ -85,21 +87,62 @@ class SimulatedObject(BasePrefab):
         addFixation(self.node,constraintType,**(fixationParams.__dict__),**kwargs)
         return
 
-    def addVisualModel(self,_mappingType=MappingType.BARYCENTRIC,extractSurfaceFromParent=False,_filename=None):
+
+    @staticmethod
+    def _addMappedSurface(node,parentElemType:ElementType,extractSurfaceFromParent=False,_filename=None,_visualElemInFile:ElementType=None,**kwargs):
+        if(_filename is not None):
+            loadMesh(node,_filename, **kwargs)
+            if(_visualElemInFile is None):
+                print("[Warning] You have to specify the surfacic element type when loading a surface from a file. The surface topology will be set to static.")
+                addStaticTopology(node,_source="@meshLoader",**kwargs)
+            else:
+                addDynamicTopology(node,_visualElemInFile,_source="@meshLoader",**kwargs)
+        elif(extractSurfaceFromParent):
+            if(parentElemType == ElementType.TETRA):
+                node.addObject("Tetra2TriangleTopologicalMapping", name="TopologicalMapping",  input="@../container", output="@container",**kwargs)
+                return
+            elif(parentElemType == ElementType.HEXA):
+                node.addObject("Hexa2QuadTopologicalMapping", name="TopologicalMapping",  input="@../container", output="@container",**kwargs)
+                return
+
+
+    def addVisualModel(self,extractSurfaceFromParent=False,_filename=None,_elemTypeInFile:ElementType=None,**kwargs):
         if(extractSurfaceFromParent and (_filename is not None)):
             print("[Warning] You have to choose between extraction and mesh loading")
+        elif(not(extractSurfaceFromParent) and (_filename is None)):
+            print("[Error] You should specify either a surface extraction of a filename, the surface will be extracted by default. ")
+            extractSurfaceFromParent = True
 
-        if(extractSurfaceFromParent):
-            if(self.elemType == ElementType.TETRA):
-                ##Add tetra2Triangles
-                return
-            elif(self.elemType == ElementType.HEXA):
-                ##Add Hexa2Quads
-                return
-        else:
-            ##USe OGL Model
-            return
+        self.visualModel = self.addchild("VisualModel")
+        SimulatedObject._addMappedSurface( self.visualModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,_filename=_filename,_visualElemInFile=_elemTypeInFile,**kwargs)
+        self.visualModel.addObject("OglModel", name="OglModel",  topology="@container")
+
+        if(_filename is not None):
+            if(self.template == "Rigid3"):
+                self.visualModel.addObject("RigidMapping",name="Mapping",isMechanical=False,globalToLocalCoords=True,**kwargs)
+            else:
+                self.visualModel.addObject("BarycentricMapping",name="Mapping",isMechanical=False,**kwargs)
+        elif(extractSurfaceFromParent):
+            self.visualModel.addObject("IdentityMapping",name="Mapping",isMechanical=False,**kwargs)
         return
 
-    def addCollisionModel(self):
+    def addCollisionModel(self,collisionParameters:CollisionParameters,extractSurfaceFromParent=False,_filename=None,_elemTypeInFile:ElementType=None,**kwargs):
+        if(extractSurfaceFromParent and (_filename is not None)):
+            print("[Warning] You have to choose between extraction and mesh loading")
+        elif(not(extractSurfaceFromParent) and (_filename is None)):
+            print("[Error] You should specify either a surface extraction of a filename, the surface will be extracted by default. ")
+            extractSurfaceFromParent = True
+
+        self.collisionModel = self.addchild("CollisionModel")
+        SimulatedObject._addMappedSurface( self.collisionModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,_filename=_filename,_visualElemInFile=_elemTypeInFile,**kwargs)
+        addCollisionModels( self.collisionModel,**(collisionParameters.__dict__),**kwargs)
+
+
+        if(_filename is not None):
+            if(self.template == "Rigid3"):
+                self.collisionModel.addObject("RigidMapping",name="Mapping",isMechanical=True,globalToLocalCoords=True,**kwargs)
+            else:
+                self.collisionModel.addObject("BarycentricMapping",name="Mapping",isMechanical=True,**kwargs)
+        elif(extractSurfaceFromParent):
+            self.collisionModel.addObject("IdentityMapping",name="Mapping",isMechanical=True,**kwargs)
         return

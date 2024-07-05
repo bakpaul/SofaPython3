@@ -54,3 +54,16 @@ class FixationParameters(object):
         self._sphereROIs=_sphereROIs
         self._indices=_indices
         self._fixAll=_fixAll
+
+class CollisionParameters(object):
+    def __init__(self,points=False, edges=False,triangles=False, spheres=False,tetrahedron=False,selfCollision=False, proximity=None, contactStiffness=None, contactFriction=None,spheresRadius=None):
+        self.points=points
+        self.edges=edges
+        self.triangles=triangles
+        self.spheres=spheres
+        self.tetrahedron=tetrahedron
+        self.selfCollision=selfCollision
+        self.proximity=proximity
+        self.contactStiffness=contactStiffness
+        self.contactFriction=contactFriction
+        self.spheresRadius=spheresRadius
