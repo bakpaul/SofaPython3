@@ -25,41 +25,41 @@ class SimulatedObject(BasePrefab):
     # - {modifier, algorithms}  (added by addDynamicTopology)
     # - mstate                  (added directly)
     def __init__(self, node,
-                 _template, _elemType:ElementType,
-                 _ODEType=ODEType.IMPLICIT, _SolverType=SolverType.DIRECT, _dynamicTopo=False,
-                 _linearSolverParams=LinearSolverParameters(),
-                 _filename=None, _source=None,
+                 template, elemType:ElementType,
+                 ODEType=ODEType.IMPLICIT, SolverType=SolverType.DIRECT, dynamicTopo=False,
+                 linearSolverParams=LinearSolverParameters(),
+                 filename=None, source=None,
                  *args,**kwargs):
 
         super().__init__(node,*args,**kwargs)
-        self.template = _template
-        self.elemType = _elemType
+        self.template = template
+        self.elemType = elemType
 
 
-        if(_ODEType == ODEType.IMPLICIT):
-            addImplicitODE(self.node,_static=False,**kwargs)
+        if(ODEType == ODEType.IMPLICIT):
+            addImplicitODE(self.node,static=False,**kwargs)
         else:
             addExplicitODE(self.node,**kwargs)
 
 
-        addLinearSolver(self.node,_iterative=(_SolverType == SolverType.ITERATIVE),**(_linearSolverParams.__dict__),**kwargs)
+        addLinearSolver(self.node,iterative=(SolverType == SolverType.ITERATIVE),**(linearSolverParams.__dict__),**kwargs)
 
-        if((_source is not None) and (_filename is not None)):
+        if((source is not None) and (filename is not None)):
             print("[Warning] you cannot have multiple sources for your topology, taking filename")
 
-        if(_filename is not None):
-            loadMesh(self.node,_filename, **kwargs)
+        if(filename is not None):
+            loadMesh(self.node,filename, **kwargs)
             topoSrc = "@meshLoader"
-        elif(_source is not None):
-            topoSrc = _source
+        elif(source is not None):
+            topoSrc = source
 
-        if(_dynamicTopo):
-            addDynamicTopology(self.node,self.elemType,_source=topoSrc,**kwargs)
+        if(dynamicTopo):
+            addDynamicTopology(self.node,self.elemType,source=topoSrc,**kwargs)
         else:
-            addStaticTopology(self.node,_source=topoSrc,**kwargs)
+            addStaticTopology(self.node,source=topoSrc,**kwargs)
 
         mstateParams = getParameterSet("mstate",kwargs)
-        self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=_template, **mstateParams)
+        self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=template, **mstateParams)
 
 
 
@@ -89,14 +89,14 @@ class SimulatedObject(BasePrefab):
 
 
     @staticmethod
-    def _addMappedSurface(node,parentElemType:ElementType,extractSurfaceFromParent=False,_filename=None,_visualElemInFile:ElementType=None,**kwargs):
-        if(_filename is not None):
-            loadMesh(node,_filename, **kwargs)
-            if(_visualElemInFile is None):
+    def _addMappedSurface(node,parentElemType:ElementType,extractSurfaceFromParent=False,filename=None,visualElemInFile:ElementType=None,**kwargs):
+        if(filename is not None):
+            loadMesh(node,filename, **kwargs)
+            if(visualElemInFile is None):
                 print("[Warning] You have to specify the surfacic element type when loading a surface from a file. The surface topology will be set to static.")
-                addStaticTopology(node,_source="@meshLoader",**kwargs)
+                addStaticTopology(node,source="@meshLoader",**kwargs)
             else:
-                addDynamicTopology(node,_visualElemInFile,_source="@meshLoader",**kwargs)
+                addDynamicTopology(node,visualElemInFile,source="@meshLoader",**kwargs)
         elif(extractSurfaceFromParent):
             if(parentElemType == ElementType.TETRA):
                 node.addObject("Tetra2TriangleTopologicalMapping", name="TopologicalMapping",  input="@../container", output="@container",**kwargs)
@@ -106,18 +106,18 @@ class SimulatedObject(BasePrefab):
                 return
 
 
-    def addVisualModel(self,extractSurfaceFromParent=False,_filename=None,_elemTypeInFile:ElementType=None,**kwargs):
-        if(extractSurfaceFromParent and (_filename is not None)):
+    def addVisualModel(self,extractSurfaceFromParent=False,filename=None,elemTypeInFile:ElementType=None,**kwargs):
+        if(extractSurfaceFromParent and (filename is not None)):
             print("[Warning] You have to choose between extraction and mesh loading")
-        elif(not(extractSurfaceFromParent) and (_filename is None)):
+        elif(not(extractSurfaceFromParent) and (filename is None)):
             print("[Error] You should specify either a surface extraction of a filename, the surface will be extracted by default. ")
             extractSurfaceFromParent = True
 
         self.visualModel = self.addchild("VisualModel")
-        SimulatedObject._addMappedSurface( self.visualModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,_filename=_filename,_visualElemInFile=_elemTypeInFile,**kwargs)
+        SimulatedObject._addMappedSurface( self.visualModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,filename=filename,visualElemInFile=elemTypeInFile,**kwargs)
         self.visualModel.addObject("OglModel", name="OglModel",  topology="@container")
 
-        if(_filename is not None):
+        if(filename is not None):
             if(self.template == "Rigid3"):
                 self.visualModel.addObject("RigidMapping",name="Mapping",isMechanical=False,globalToLocalCoords=True,**kwargs)
             else:
@@ -126,19 +126,19 @@ class SimulatedObject(BasePrefab):
             self.visualModel.addObject("IdentityMapping",name="Mapping",isMechanical=False,**kwargs)
         return
 
-    def addCollisionModel(self,collisionParameters:CollisionParameters,extractSurfaceFromParent=False,_filename=None,_elemTypeInFile:ElementType=None,**kwargs):
-        if(extractSurfaceFromParent and (_filename is not None)):
+    def addCollisionModel(self,collisionParameters:CollisionParameters,extractSurfaceFromParent=False,filename=None,elemTypeInFile:ElementType=None,**kwargs):
+        if(extractSurfaceFromParent and (filename is not None)):
             print("[Warning] You have to choose between extraction and mesh loading")
-        elif(not(extractSurfaceFromParent) and (_filename is None)):
+        elif(not(extractSurfaceFromParent) and (filename is None)):
             print("[Error] You should specify either a surface extraction of a filename, the surface will be extracted by default. ")
             extractSurfaceFromParent = True
 
         self.collisionModel = self.addchild("CollisionModel")
-        SimulatedObject._addMappedSurface( self.collisionModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,_filename=_filename,_visualElemInFile=_elemTypeInFile,**kwargs)
+        SimulatedObject._addMappedSurface( self.collisionModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,filename=filename,visualElemInFile=elemTypeInFile,**kwargs)
         addCollisionModels( self.collisionModel,**(collisionParameters.__dict__),**kwargs)
 
 
-        if(_filename is not None):
+        if(filename is not None):
             if(self.template == "Rigid3"):
                 self.collisionModel.addObject("RigidMapping",name="Mapping",isMechanical=True,globalToLocalCoords=True,**kwargs)
             else:

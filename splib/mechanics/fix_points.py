@@ -13,14 +13,14 @@ class ConstraintType(Enum):
 ##box
 
 @PrefabMethod
-@MapKeywordArg("fixedConstraints",["_indices","indices"],["_fixAll","fixAll"])
-def addFixation(node,type:ConstraintType,_boxROIs=None, _sphereROIs=None, _indices=None, _fixAll=None,**kwargs):
-    if (_indices is None):
-        if(_boxROIs is not None):
-            node.addObject("BoxROI",name='fixedBoxROI',box=_boxROIs,**kwargs)
+@MapKeywordArg("fixedConstraints",["indices","indices"],["fixAll","fixAll"])
+def addFixation(node,type:ConstraintType,boxROIs=None, sphereROIs=None, indices=None, fixAll=None,**kwargs):
+    if (indices is None):
+        if(boxROIs is not None):
+            node.addObject("BoxROI",name='fixedBoxROI',box=boxROIs,**kwargs)
             kwargs["fixedConstraints"]["indices"]="@fixedBoxROI.indices"
-        if(_sphereROIs is not None):
-            node.addObject("SphereROI",name='fixedSphereROI',centers=_sphereROIs[0],radii=_sphereROIs[1],**kwargs)
+        if(sphereROIs is not None):
+            node.addObject("SphereROI",name='fixedSphereROI',centers=sphereROIs[0],radii=sphereROIs[1],**kwargs)
             kwargs["fixedConstraints"]["indices"]="@fixedSphereROI.indices"
 
     match type:

@@ -7,26 +7,26 @@ from topology.static import *
 
 class NonSimulatedObject(BasePrefab):
     def __init__(self, node,
-                 _template, _elemType:ElementType=None,_dynamicTopo=False,_filename=None, _source=None,*args,**kwargs):
+                 template, _elemType:ElementType=None,_dynamicTopo=False,filename=None, source=None,*args,**kwargs):
         super().__init__(node,*args,**kwargs)
 
         if(_elemType is not None):
-            if((_source is not None) and (_filename is not None)):
+            if((source is not None) and (filename is not None)):
             print("[Warning] you cannot have multiple sources for your topology, taking filename")
 
-            if(_filename is not None):
-                loadMesh(self.node,_filename, **kwargs)
+            if(filename is not None):
+                loadMesh(self.node,filename, **kwargs)
                 topoSrc = "@meshLoader"
-            elif(_source is not None):
-                topoSrc = _source
+            elif(source is not None):
+                topoSrc = source
 
             if(_dynamicTopo):
-                addDynamicTopology(self.node,_source=topoSrc,**kwargs)
+                addDynamicTopology(self.node,source=topoSrc,**kwargs)
             else:
-                addStaticTopology(self.node,_source=topoSrc,**kwargs)
+                addStaticTopology(self.node,source=topoSrc,**kwargs)
 
         mstateParams = getParameterSet("mstate",kwargs)
-        self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=_template, **mstateParams)
+        self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=template, **mstateParams)
 
 
 

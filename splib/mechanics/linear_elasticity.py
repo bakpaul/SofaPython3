@@ -4,8 +4,8 @@ from topology.dynamic import ElementType
 
 
 @PrefabMethod
-@MapKeywordArg("constitutiveLaw",["_youngModulus","youngModulus"],["_poissonRatio","poissonRatio"],["_method","method"])
-def addLinearElasticity(node,elem:ElementType,_youngModulus=None, _poissonRatio=None, _method=None,**kwargs):
+@MapKeywordArg("constitutiveLaw",["youngModulus","youngModulus"],["poissonRatio","poissonRatio"],["method","method"])
+def addLinearElasticity(node,elem:ElementType,youngModulus=None, poissonRatio=None, method=None,**kwargs):
     match elem:
         case ElementType.EDGES:
             node.addObject("BeamFEMForceField",name="constitutiveLaw",**kwargs)

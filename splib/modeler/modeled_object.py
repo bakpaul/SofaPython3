@@ -4,20 +4,20 @@ from typing import List, Callable, Tuple, Dict
 # Callable object used to store method and parameters needed to instanciate
 ##########
 class InstanciationMethod():
-    m_methodID : str
-    m_method   : Callable
+    mmethodID : str
+    mmethod   : Callable
     m_params   : Dict
 
     def __init__(self,
                  _id : str,
-                 _method : Callable,
+                 method : Callable,
                  _params : Dict):
-        self.m_methodID = _id
-        self.m_method = _method
+        self.mmethodID = _id
+        self.mmethod = method
         self.m_params = _params
     def __call__(self,
                  node):
-        self.m_method(node,**self.m_params)
+        self.mmethod(node,**self.m_params)
     def setParams(self,_params:Dict):
         self.m_params = _params
 
@@ -27,48 +27,48 @@ class InstanciationMethod():
 ##########
 class ModeledObject(object):
     class MethodList():
-        m_methods : List[InstanciationMethod]
+        mmethods : List[InstanciationMethod]
 
         def __init__(self):
-            self.m_methods = []
+            self.mmethods = []
         def __iter__(self):
             self._iterID = -1;
             return self
 
         def __next__(self):
-            if self._iterID + 1  < len(self.m_methods):
+            if self._iterID + 1  < len(self.mmethods):
                 self._iterID += 1
-                return self.m_methods[self._iterID]
+                return self.mmethods[self._iterID]
             else:
                 raise StopIteration
 
-        def append(self,_method : InstanciationMethod):
-            for met in self.m_methods:
-                if met.m_methodID == _method.m_method:
+        def append(self,method : InstanciationMethod):
+            for met in self.mmethods:
+                if met.mmethodID == method.mmethod:
                     print('Method with same id already exists in the list')
                     return UserWarning
-            self.m_methods.append(_method)
+            self.mmethods.append(method)
 
-        def find(self, _methodID:str) -> int:
+        def find(self, methodID:str) -> int:
             id = -1
             acc = -1
-            for met in self.m_methods:
+            for met in self.mmethods:
                 acc += 1
-                if met.m_methodID == _methodID:
+                if met.mmethodID == methodID:
                     id = acc
             return id
 
-        def get(self, _methodID:str) :
-            id = self.find(_methodID)
+        def get(self, methodID:str) :
+            id = self.find(methodID)
             if id != -1:
-                return self.m_methods[id]
+                return self.mmethods[id]
             else:
                 return RuntimeError
 
-        def remove(self, _methodID:str) -> int:
-            id = self.find(_methodID)
+        def remove(self, methodID:str) -> int:
+            id = self.find(methodID)
             if id != -1:
-                self.m_methods.pop(id)
+                self.mmethods.pop(id)
             return id
 
 
@@ -86,7 +86,7 @@ class ModeledObject(object):
     def printDebug(self):
         print(self.name)
         for tup in self.m_instanciationMethods:
-            print("  " + tup.m_methodID)
+            print("  " + tup.mmethodID)
 
 
 
@@ -95,9 +95,9 @@ class ModeledObject(object):
 ##########
 class SimulatedObject(ModeledObject):
     template : str
-    def __init__(self,name:str,_template=None):
+    def __init__(self,name:str,template=None):
         ModeledObject.__init__(self,name)
-        self.template = _template
+        self.template = template
 
     def defaultConstruction(self,_solverParams,_topologyParams,_mechaParams):
         self.addSolvers(_solverParams)

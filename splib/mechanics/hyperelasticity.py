@@ -4,8 +4,8 @@ from topology.dynamic import ElementType
 
 
 @PrefabMethod
-@MapKeywordArg("constitutiveLaw",["_materialName","materialName"],["_parameterSet","ParameterSet"],["_matrixRegularization","matrixRegularization"])
-def addHyperelasticity(node,elem:ElementType,_materialName=None, _parameterSet=None, _matrixRegularization=None,**kwargs):
+@MapKeywordArg("constitutiveLaw",["materialName","materialName"],["parameterSet","ParameterSet"],["matrixRegularization","matrixRegularization"])
+def addHyperelasticity(node,elem:ElementType,materialName=None, parameterSet=None, matrixRegularization=None,**kwargs):
     match elem:
         case ElementType.TETRA:
             node.addObject("TetrahedronHyperelasticityFEMForceField",name="constitutiveLaw",**kwargs)
