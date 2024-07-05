@@ -9,6 +9,7 @@ class CollisionType(Enum):
 
 @PrefabMethod
 def setupDefaultHeader(node, displayFlags = "showVisualModels", parallelComputing=False,**kwargs):
+    #TODO make this global param working
     global scene_collisionType
     scene_collisionType = CollisionType.NONE
 

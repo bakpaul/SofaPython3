@@ -61,6 +61,7 @@ class SimulatedObject(BasePrefab):
         else:
             addStaticTopology(self.node,source=topoSrc,**kwargs)
 
+        # TODO: remove the need of doing this because now, the rest of the prefabs isn't working properly
         mstateParams = getParameterSet("mstate",kwargs)
         self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=template, **mstateParams)
 
