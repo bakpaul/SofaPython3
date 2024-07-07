@@ -67,3 +67,12 @@ class CollisionParameters(object):
         self.contactStiffness=contactStiffness
         self.contactFriction=contactFriction
         self.spheresRadius=spheresRadius
+
+
+class TopologyParameters(object):
+    def __init__(self,dynamic=False, source=None, filename=None, generateSparseGrid=False, sparseGridSize=[2,2,2], ):
+        self.dynamic=dynamic
+        self.source=source
+        self.filename=filename
+        self.generateSparseGrid=generateSparseGrid
+        self.sparseGridSize=sparseGridSize

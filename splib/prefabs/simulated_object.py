@@ -28,9 +28,9 @@ class SimulatedObject(BasePrefab):
     # - mstate                  (added directly)
     def __init__(self, node,
                  template, elemType:ElementType,
-                 ODEType=ODEType.IMPLICIT, SolverType=SolverType.DIRECT, dynamicTopo=False,
+                 ODEType=ODEType.IMPLICIT, SolverType=SolverType.DIRECT,
                  linearSolverParams=LinearSolverParameters(), collisionType=CollisionType.NONE,
-                 filename=None, source=None,
+                 topologyParams=TopologyParameters(),
                  *args,**kwargs):
         global scene_collisionType
         if(not(collisionType == CollisionType.NONE)):
@@ -49,21 +49,25 @@ class SimulatedObject(BasePrefab):
 
         addLinearSolver(self.node,iterative=(SolverType == SolverType.ITERATIVE),**(linearSolverParams.__dict__),**kwargs)
 
-        if((source is not None) and (filename is not None)):
+        if((topologyParams.source is not None) and (topologyParams.filename is not None)):
             print("[Warning] you cannot have multiple sources for your topology, taking filename")
 
-        if(filename is not None):
-            loadMesh(self.node,filename, **kwargs)
+        if(topologyParams.filename is not None):
+            loadMesh(self.node,topologyParams.filename, **kwargs)
             topoSrc = "@meshLoader"
-        elif(source is not None):
-            topoSrc = source
+        elif(topologyParams.source is not None):
+            topoSrc = topologyParams.source
 
-        if(dynamicTopo):
+        if(topologyParams.generateSparseGrid):
+            self.node.addObject("SparseGridRamificationTopology",name="SparseGrid",position=topoSrc+".position",n=topologyParams.sparseGridSize,**kwargs)
+            topoSrc = "@SparseGrid"
+
+        if(topologyParams.dynamic):
             addDynamicTopology(self.node,self.elemType,source=topoSrc,**kwargs)
         else:
             addStaticTopology(self.node,source=topoSrc,**kwargs)
 
-        self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=template, **mstateParams)
+        self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=template, **kwargs)
 
         if(collisionType == CollisionType.LAGRANGIAN):
             self.mechanicalObject = self.node.addObject("LinearSolverConstraintCorrection",name="constraintCorrection", **kwargs)

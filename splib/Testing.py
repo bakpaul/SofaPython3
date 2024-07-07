@@ -56,8 +56,6 @@ def createScene(rootNode):
                                                                'Sofa.Component.LinearSolver.Direct',
                                                                'Sofa.Component.Topology.Container.Dynamic',
                                                                'Sofa.Component.Visual']})
-    print(issubclass(ChildWrapper,ObjectWrapper))
-
     #
     #
     # ## TODO : Being able to call "childNode.addAnything" by using the __getattr__ method
@@ -71,7 +69,7 @@ def createScene(rootNode):
     # addMass(childNode,massDensity="1.0")
     # addFixation(childNode,ConstraintType.PROJECTIVE,indices="3 39 64")
 
-    childNode2 = rootNode.addSimulatedObject("Liver2",template="Vec3d",elemType=ElementType.TETRA,filename="mesh/liver.msh")
+    childNode2 = rootNode.addSimulatedObject("Liver2",template="Vec3d",elemType=ElementType.TETRA,topologyParams=TopologyParameters(filename="mesh/liver.msh"))
     childNode2.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
                                     lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
                                     massParams=MassParameters(massDensity="1.0"))
