@@ -44,7 +44,7 @@ def createScene(rootNode):
     rootNode.dt = 0.02
     rootNode.gravity = [0,-9.81,0]
 
-    setupPenalityCollisionHeader(rootNode,requiredPlugins={"pluginName":['Sofa.Component.Constraint.Projective',
+    setupLagrangianCollision(rootNode,requiredPlugins={"pluginName":['Sofa.Component.Constraint.Projective',
                                                                'Sofa.Component.Engine.Select',
                                                                'Sofa.Component.LinearSolver.Direct',
                                                                'Sofa.Component.Mass',
@@ -69,7 +69,7 @@ def createScene(rootNode):
     # addMass(childNode,massDensity="1.0")
     # addFixation(childNode,ConstraintType.PROJECTIVE,indices="3 39 64")
 
-    childNode2 = rootNode.addSimulatedObject("Liver2",template="Vec3d",elemType=ElementType.TETRA,topologyParams=TopologyParameters(filename="mesh/liver.msh"))
+    childNode2 = rootNode.addSimulatedObject("Liver2",template="Vec3d",elemType=ElementType.TETRA,topologyParams=TopologyParameters(filename="mesh/liver.msh"),collisionType=CollisionType.LAGRANGIAN)
     childNode2.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
                                     lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
                                     massParams=MassParameters(massDensity="1.0"))

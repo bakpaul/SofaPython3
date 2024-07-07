@@ -32,9 +32,6 @@ class SimulatedObject(BasePrefab):
                  linearSolverParams=LinearSolverParameters(), collisionType=CollisionType.NONE,
                  topologyParams=TopologyParameters(),
                  *args,**kwargs):
-        global scene_collisionType
-        if(not(collisionType == CollisionType.NONE)):
-            collisionType = scene_collisionType
 
         super().__init__(node,*args,**kwargs)
         self.template = template
