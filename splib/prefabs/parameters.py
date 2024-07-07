@@ -28,6 +28,10 @@ class IterativeLinearSolverParameters(LinearSolverParameters):
         self.tolerance=tolerance
         self.threshold=threshold
 
+class DirectLinearSolverParameters(LinearSolverParameters):
+    def __init__(self,constantSparsity=False):
+        self.constantSparsity = constantSparsity
+
 class ConstitutiveLawParameters(object):
     def __init__(self):
         return
