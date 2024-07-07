@@ -15,6 +15,8 @@ from topology.static import *
 
 class SimulatedObject(BasePrefab):
 
+    mappedTopology : Dict
+
     # This constructor initialize the component until the Mechanical Object.
     # Because @PrefabMethod are used, kwargs can contain dictionary which associated key word correspond to the object name
     # Here the name list you can affect is :
@@ -61,8 +63,6 @@ class SimulatedObject(BasePrefab):
         else:
             addStaticTopology(self.node,source=topoSrc,**kwargs)
 
-        # TODO: remove the need of doing this because now, the rest of the prefabs isn't working properly
-        mstateParams = getParameterSet("mstate",kwargs)
         self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=template, **mstateParams)
 
         if(collisionType == CollisionType.LAGRANGIAN):
@@ -163,3 +163,24 @@ class SimulatedObject(BasePrefab):
         elif(extractSurfaceFromParent):
             self.collisionModel.addObject("IdentityMapping",name="Mapping",isMechanical=True,**kwargs)
         return
+
+    def addMappedTopology(self, name, template, elemType:ElementType,dynamicTopo=False,isMechanical=False):
+        if(name in self.mappedTopology):
+            print("[ERROR] A mapped node with the name " + name + " already exist.")
+            return
+
+        self.mappedTopology()[name] = self.node.addChild(name)
+
+
+        if(dynamicTopo):
+            addDynamicTopology(self.mappedTopology[name],elemType,**kwargs)
+        else:
+            addStaticTopology(self.mappedTopology[name],**kwargs)
+
+        self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=template, **kwargs)
+
+
+        if(self.template == "Rigid3"):
+            self.mappedTopology[name].addObject("RigidMapping",name="Mapping",isMechanical=isMechanical,globalToLocalCoords=True,**kwargs)
+        else:
+            self.mappedTopology[name].addObject("BarycentricMapping",name="Mapping",isMechanical=isMechanical,**kwargs)

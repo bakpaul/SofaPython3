@@ -8,6 +8,7 @@ from mechanics.linear_elasticity import *
 from mechanics.mass import *
 from mechanics.fix_points import *
 from topology.loader import *
+from core.node_wrapper import *
 
 class displayNode():
     def __init__(self,_level=0):
@@ -55,7 +56,7 @@ def createScene(rootNode):
                                                                'Sofa.Component.LinearSolver.Direct',
                                                                'Sofa.Component.Topology.Container.Dynamic',
                                                                'Sofa.Component.Visual']})
-
+    print(issubclass(ChildWrapper,ObjectWrapper))
 
     #
     #
