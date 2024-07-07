@@ -36,7 +36,7 @@ def setupDefaultHeader(node, displayFlags = "showVisualModels", parallelComputin
 
 
 @PrefabMethod
-def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels", stick=False, **kwargs):
+def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels", stick=False, parallelComputing=False,**kwargs):
     global scene_collisionType
     scene_collisionType = CollisionType.PENALITY
     node.addObject('VisualStyle', displayFlags=displayFlags)
@@ -57,10 +57,14 @@ def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels", stick
                                                  ],
                                                  **kwargs)
 
+    parallelPrefix = ""
+    if(parallelComputing):
+        parallelPrefix="Parallel"
+
     node.addObject('DefaultAnimationLoop',name="animation", **kwargs)
     node.addObject('CollisionPipeline', name="collisionPipeline", **kwargs)
-    node.addObject('BruteForceBroadPhase', name="broadPhase", **kwargs)
-    node.addObject('BVHNarrowPhase',  name="narrowPhase", **kwargs)
+    node.addObject(parallelPrefix+'BruteForceBroadPhase', name="broadPhase", **kwargs)
+    node.addObject(parallelPrefix+'BVHNarrowPhase',  name="narrowPhase", **kwargs)
 
     if(stick):
         node.addObject('CollisionResponse',name="ContactManager", response="BarycentricStickContact",**kwargs)
@@ -99,13 +103,17 @@ def setupLagrangianCollision(node,  displayFlags = "showVisualModels", parallelC
                    parallelODESolving=parallelComputing,
                    **kwargs)
 
+    parallelPrefix = ""
+    if(parallelComputing):
+        parallelPrefix="Parallel"
+
     node.addObject('CollisionPipeline', name="collisionPipeline",
                    **kwargs)
 
-    node.addObject('BruteForceBroadPhase', name="broadPhase",
+    node.addObject(parallelPrefix+'BruteForceBroadPhase', name="broadPhase",
                    **kwargs)
 
-    node.addObject('BVHNarrowPhase',  name="narrowPhase",
+    node.addObject(parallelPrefix+'BVHNarrowPhase',  name="narrowPhase",
                    **kwargs)
 
     if(stick):
