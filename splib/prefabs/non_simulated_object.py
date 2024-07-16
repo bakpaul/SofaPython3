@@ -1,8 +1,8 @@
-from core.node_wrapper import BasePrefab
+from splib.core.node_wrapper import BasePrefab
 
-from topology.loader import *
-from topology.dynamic import *
-from topology.static import *
+from splib.topology.loader import *
+from splib.topology.dynamic import *
+from splib.topology.static import *
 
 
 class NonSimulatedObject(BasePrefab):

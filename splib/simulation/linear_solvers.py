@@ -1,5 +1,5 @@
-from core.node_wrapper import *
-from core.utils import *
+from splib.core.node_wrapper import PrefabMethod
+from splib.core.utils import getParameterSet
 
 @PrefabMethod
 def addLinearSolver(node,iterative=False,iterations=None,tolerance=None,threshold=None,template=None,constantSparsity=False,**kwargs):
@@ -17,7 +17,7 @@ def addLinearSolver(node,iterative=False,iterations=None,tolerance=None,threshol
     kwargs["LinearSolver"] = containerParams
 
     if(constantSparsity):
-        node.addObject("ConstantSparsityPatternSystem",name='LinearSystem',template=containerParams["template"],**kwargs)
+        node.addObject("ConstantSparsityPatternSystem",name='LinearSystem',**kwargs)
         kwargs["LinearSolver"]["linearSystem"]="@LinearSystem"
 
 

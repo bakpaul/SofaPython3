@@ -1,35 +1,22 @@
-from enum import Enum
+from splib.core.enum_types import *
 
-class ConstitutiveLaw(Enum):
-    LINEAR_COROT    = 1
-    HYPERELASTIC    = 2
-
-class ODEType(Enum):
-    EXPLICIT    = 1
-    IMPLICIT    = 2
-
-class SolverType(Enum):
-    DIRECT    = 1
-    ITERATIVE = 2
-
-class MappingType(Enum):
-    BARYCENTRIC = 1
-    IDENTITY    = 2
-    RIGID       = 3
-
+##centers radii
 class LinearSolverParameters(object):
     def __init__(self, template=None):
         self.template=template
 
 class IterativeLinearSolverParameters(LinearSolverParameters):
-    def __init__(self, iterations=None,tolerance=None,threshold=None,template=None):
-        self.super().__init__(template)
+    def __init__(self, iterations=None,tolerance=None,threshold=None,template=None,parallelInverseProduct=False):
+        super().__init__(template=template)
         self.iterations=iterations
         self.tolerance=tolerance
         self.threshold=threshold
+        self.parallelInverseProduct = parallelInverseProduct
+
 
 class DirectLinearSolverParameters(LinearSolverParameters):
-    def __init__(self,constantSparsity=False):
+    def __init__(self,constantSparsity=False,template=None):
+        super().__init__(template=template)
         self.constantSparsity = constantSparsity
 
 class ConstitutiveLawParameters(object):
@@ -74,7 +61,7 @@ class CollisionParameters(object):
 
 
 class TopologyParameters(object):
-    def __init__(self,dynamic=False, source=None, filename=None, generateSparseGrid=False, sparseGridSize=[2,2,2], ):
+    def __init__(self,dynamic=False, source=None, filename=None, generateSparseGrid=False, sparseGridSize=[2,2,2] ):
         self.dynamic=dynamic
         self.source=source
         self.filename=filename

@@ -12,7 +12,6 @@ class BasePrefab(object):
     def __getattr__(self, item):
         return getattr(self.node,item)
 
-
 class ObjectWrapper(BasePrefab):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)

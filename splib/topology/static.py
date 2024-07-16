@@ -1,5 +1,5 @@
-from core.node_wrapper import PrefabMethod
-from core.utils import MapKeywordArg
+from splib.core.node_wrapper import PrefabMethod
+from splib.core.utils import MapKeywordArg
 
 @PrefabMethod
 @MapKeywordArg("container",["source","src"])

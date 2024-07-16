@@ -1,6 +1,6 @@
-from core.node_wrapper import *
-from core.utils import *
-from topology.dynamic import ElementType
+from splib.core.node_wrapper import PrefabMethod
+from splib.core.utils import MapKeywordArg
+from splib.core.enum_types import ElementType
 
 
 
@@ -18,6 +18,6 @@ def addCollisionModels(node,points=False, edges=False,triangles=False, spheres=F
     if(triangles):
         node.addObject("TriangleCollisionModel",name="TriangleCollision",**kwargs)
     if(spheres):
-        node.addObject("SphereCollisionModel",name="TetraCollision",**kwargs)
+        node.addObject("SphereCollisionModel",name="SphereCollision",**kwargs)
     if(tetrahedron):
-        node.addObject("TetrahedronCollisionModel",name="SphereCollision",**kwargs)
+        node.addObject("TetrahedronCollisionModel",name="TetraCollision",**kwargs)

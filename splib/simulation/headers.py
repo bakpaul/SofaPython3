@@ -1,4 +1,4 @@
-from core.node_wrapper import PrefabMethod
+from splib.core.node_wrapper import PrefabMethod
 from enum import Enum
 
 
@@ -119,5 +119,6 @@ def setupLagrangianCollision(node,  displayFlags = "showVisualModels",background
         node.addObject('CollisionResponse',name="ContactManager", response="FrictionContact", responseParams="mu="+str(frictionCoef),**kwargs)
     node.addObject('LocalMinDistance' ,name="Distance", **kwargs)
     node.addObject('GenericConstraintSolver',name="ConstraintSolver", tolerance=tolerance, maxIterations=maxIterations, **kwargs)
+    node.addObject("ConstraintAttachButtonSetting")
 
     return node

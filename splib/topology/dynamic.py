@@ -1,16 +1,9 @@
-from core.node_wrapper import *
+from splib.core.node_wrapper import PrefabMethod
 from enum import Enum
-from core.utils import MapKeywordArg
+from splib.core.utils import MapKeywordArg
+from splib.core.enum_types import ElementType
 
 # class syntax
-
-class ElementType(Enum):
-    POINTS      = 1
-    EDGES       = 2
-    TRIANGLES   = 3
-    QUAD        = 4
-    TETRA       = 5
-    HEXA        = 6
 
 
 @PrefabMethod

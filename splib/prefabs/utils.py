@@ -1,6 +1,6 @@
-from core.node_wrapper import ChildWrapper
-from prefabs.simulated_object import SimulatedObject
-from prefabs.non_simulated_object import NonSimulatedObject
+from splib.core.node_wrapper import ChildWrapper
+from splib.prefabs.simulated_object import SimulatedObject
+from splib.prefabs.non_simulated_object import NonSimulatedObject
 from functools import wraps
 
 class RootWrapper(ChildWrapper):
@@ -17,7 +17,11 @@ class RootWrapper(ChildWrapper):
         ## We need to wrap the child passed to the prefab object to enforce the mechanism of "addChild"
         return NonSimulatedObject(RootWrapper(child),*args,**kwargs)
 
-
+    def __setattr__(self, key, value):
+        if(("node" in self.__dict__) and (key  in self.__dict__["node"].__dict__)):
+            self.__dict__["node"].__dict__[key] = value
+        else:
+            self.__dict__[key] = value
 
 def PrefabSimulation(method):
     @wraps(method)

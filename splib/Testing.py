@@ -1,14 +1,14 @@
-from prefabs.utils import PrefabSimulation
-from prefabs.parameters import *
-from topology.dynamic import *
-from simulation.headers import *
-from simulation.ode_solvers import *
-from simulation.linear_solvers import *
-from mechanics.linear_elasticity import *
-from mechanics.mass import *
-from mechanics.fix_points import *
-from topology.loader import *
-from core.node_wrapper import *
+from splib.prefabs.utils import PrefabSimulation
+from splib.prefabs.parameters import *
+from splib.topology.dynamic import *
+from splib.simulation.headers import *
+from splib.simulation.ode_solvers import *
+from splib.simulation.linear_solvers import *
+from splib.mechanics.linear_elasticity import *
+from splib.mechanics.mass import *
+from splib.mechanics.fix_points import *
+from splib.topology.loader import *
+from splib.core.node_wrapper import *
 
 class displayNode():
     def __init__(self,_level=0):

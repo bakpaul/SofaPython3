@@ -1,4 +1,4 @@
-from core.node_wrapper import *
+from splib.core.node_wrapper import PrefabMethod
 
 @PrefabMethod
 def addImplicitODE(node,static=False,**kwargs):

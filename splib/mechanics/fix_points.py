@@ -1,15 +1,9 @@
-from core.node_wrapper import *
-from core.utils import *
+from splib.core.node_wrapper import PrefabMethod
+from splib.core.utils import MapKeywordArg
+from splib.core.enum_types import ConstraintType
 from enum import Enum
 
 
-
-class ConstraintType(Enum):
-    PROJECTIVE = 1
-    WEAK       = 2
-    LAGRANGIAN = 3
-
-##centers radii
 ##box
 
 @PrefabMethod
