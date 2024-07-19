@@ -2,21 +2,21 @@ from splib.core.enum_types import *
 
 ##centers radii
 class LinearSolverParameters(object):
-    def __init__(self, template=None):
+    def __init__(self, template=None,parallelInverseProduct=False):
         self.template=template
+        self.parallelInverseProduct = parallelInverseProduct
 
 class IterativeLinearSolverParameters(LinearSolverParameters):
-    def __init__(self, iterations=None,tolerance=None,threshold=None,template=None,parallelInverseProduct=False):
-        super().__init__(template=template)
+    def __init__(self, iterations=None,tolerance=None,threshold=None,**kwargs):
+        super().__init__(**kwargs)
         self.iterations=iterations
         self.tolerance=tolerance
         self.threshold=threshold
-        self.parallelInverseProduct = parallelInverseProduct
 
 
 class DirectLinearSolverParameters(LinearSolverParameters):
-    def __init__(self,constantSparsity=False,template=None):
-        super().__init__(template=template)
+    def __init__(self,constantSparsity=False,**kwargs):
+        super().__init__(**kwargs)
         self.constantSparsity = constantSparsity
 
 class ConstitutiveLawParameters(object):

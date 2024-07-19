@@ -117,8 +117,8 @@ def setupLagrangianCollision(node,  displayFlags = "showVisualModels",background
         node.addObject('CollisionResponse',name="ContactManager", response="StickContactConstraint", responseParams="tol="+str(tolerance),**kwargs)
     else:
         node.addObject('CollisionResponse',name="ContactManager", response="FrictionContact", responseParams="mu="+str(frictionCoef),**kwargs)
-    node.addObject('LocalMinDistance' ,name="Distance", **kwargs)
-    node.addObject('GenericConstraintSolver',name="ConstraintSolver", tolerance=tolerance, maxIterations=maxIterations, **kwargs)
+    node.addObject('NewProximityIntersection' ,name="Distance", **kwargs)
+    node.addObject('GenericConstraintSolver',name="ConstraintSolver", tolerance=tolerance, maxIterations=maxIterations, multithreading=parallelComputing,**kwargs)
     node.addObject("ConstraintAttachButtonSetting")
 
     return node

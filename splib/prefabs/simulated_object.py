@@ -28,13 +28,12 @@ class SimulatedObject(BasePrefab):
     # - {modifier, algorithms}  (added by addDynamicTopology)
     # - mstate                  (added directly)
     def __init__(self, node,
-                 template, elemType:ElementType,
+                 template, elemType:ElementType=None,
                  ODEType=ODEType.IMPLICIT, SolverType=SolverType.DIRECT,
                  linearSolverParams=LinearSolverParameters(), collisionType=CollisionType.NONE,
-                 topologyParams=TopologyParameters(),
-                 *args,**kwargs):
+                 topologyParams=TopologyParameters(),**kwargs):
 
-        super().__init__(node,*args,**kwargs)
+        super().__init__(node)
         self.template = template
         self.elemType = elemType
         self.mappedTopology = {}
@@ -66,10 +65,11 @@ class SimulatedObject(BasePrefab):
             self.node.addObject("SparseGridRamificationTopology",name="SparseGrid",position=topoSrc+".position",n=topologyParams.sparseGridSize,**kwargs)
             topoSrc = "@SparseGrid"
 
-        if(topologyParams.dynamic):
-            addDynamicTopology(self.node,self.elemType,source=topoSrc,**kwargs)
-        else:
-            addStaticTopology(self.node,source=topoSrc,**kwargs)
+        if(self.elemType is not None):
+            if(topologyParams.dynamic):
+                addDynamicTopology(self.node,self.elemType,source=topoSrc,**kwargs)
+            else:
+                addStaticTopology(self.node,source=topoSrc,**kwargs)
 
         self.mechanicalObject = self.node.addObject("MechanicalObject",name="mstate", template=template, **kwargs)
 
@@ -88,7 +88,7 @@ class SimulatedObject(BasePrefab):
         ## ADD Mass
         if(law==ConstitutiveLaw.LINEAR_COROT):
             addLinearElasticity(self.node,self.elemType,**(lawParams.__dict__),**kwargs)
-        else:
+        elif(law is not None):
             addHyperelasticity(self.node,self.elemType,**(lawParams.__dict__),**kwargs)
 
         if(not(massParams.__dict__ == {})):

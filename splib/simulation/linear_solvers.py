@@ -1,8 +1,9 @@
 from splib.core.node_wrapper import PrefabMethod
-from splib.core.utils import getParameterSet
+from splib.core.utils import *
 
 @PrefabMethod
-def addLinearSolver(node,iterative=False,iterations=None,tolerance=None,threshold=None,template=None,constantSparsity=False,**kwargs):
+@MapKeywordArg("LinearSolver",["parallelInverseProduct","parallelInverseProduct"])
+def addLinearSolver(node,iterative=False,iterations=None,tolerance=None,threshold=None,template=None,constantSparsity=False,parallelInverseProduct=False,**kwargs):
     containerParams = getParameterSet("LinearSolver",kwargs)
     if iterative:
         if iterations:
@@ -17,6 +18,7 @@ def addLinearSolver(node,iterative=False,iterations=None,tolerance=None,threshol
         else:
             containerParams["template"] = template
     kwargs["LinearSolver"] = containerParams
+    kwargs["LinearSolver"]["parallelInverseProduct"] = parallelInverseProduct
 
     if(constantSparsity):
         node.addObject("ConstantSparsityPatternSystem",name='LinearSystem',**kwargs)
