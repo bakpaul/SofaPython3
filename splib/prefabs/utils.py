@@ -18,8 +18,8 @@ class RootWrapper(ChildWrapper):
         return NonSimulatedObject(RootWrapper(child),*args,**kwargs)
 
     def __setattr__(self, key, value):
-        if(("node" in self.__dict__) and (key  in self.__dict__["node"].__dict__)):
-            self.__dict__["node"].__dict__[key] = value
+        if(not(key=="node") and ("node" in self.__dict__)):
+            self.__dict__["node"].__setattr__(key,value)
         else:
             self.__dict__[key] = value
 

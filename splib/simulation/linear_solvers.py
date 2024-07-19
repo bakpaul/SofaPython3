@@ -14,11 +14,15 @@ def addLinearSolver(node,iterative=False,iterations=None,tolerance=None,threshol
     else:
         if not(template) and not("template" in containerParams):
             containerParams["template"] = 'CompressedRowSparseMatrix'
+        else:
+            containerParams["template"] = template
     kwargs["LinearSolver"] = containerParams
 
     if(constantSparsity):
         node.addObject("ConstantSparsityPatternSystem",name='LinearSystem',**kwargs)
+        kwargs["LinearSolver"]["template"] = 'CompressedRowSparseMatrix'
         kwargs["LinearSolver"]["linearSystem"]="@LinearSystem"
+
 
 
     if iterative:

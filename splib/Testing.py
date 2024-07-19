@@ -37,6 +37,14 @@ class exportScene():
         print(name + '=' + self.name+".addChild(\"" + name + "\")")
         return exportScene(name)
 
+    def __setattr__(self, key, value):
+        if(not(key == "name")):
+            print(self.__dict__["name"] + "." + key + " = " + str(value))
+            self.__dict__[key] = value
+        else:
+            self.__dict__[key] = value
+
+
 @PrefabSimulation
 def createScene(rootNode):
 
