@@ -1,4 +1,5 @@
 from functools import wraps
+from splib.core.modeled_object import *
 
 # The two classes are not merged because one could want to use a PrefabMethod
 # (enabling to pass dictionary fixing params) without wanting to use a full PrefabSimulation
@@ -11,6 +12,7 @@ class BasePrefab(object):
 
     def __getattr__(self, item):
         return getattr(self.node,item)
+
 
 class ObjectWrapper(BasePrefab):
     def __init__(self,*args,**kwargs):
@@ -48,6 +50,13 @@ class ChildWrapper(ObjectWrapper):
         returnObject =  self.__new__(type(self))
         returnObject.__init__(child)
         return returnObject
+
+    def __setattr__(self, key, value):
+        if(not(key=="node") and ("node" in self.__dict__)):
+            self.__dict__["node"].__setattr__(key,value)
+        else:
+            self.__dict__[key] = value
+
 
 
 

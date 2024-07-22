@@ -1,1 +1,1 @@
-__all__ = ["node_wrapper", "utils","enum_types"]
+__all__ = ["modeled_object","node_wrapper", "utils","enum_types"]
