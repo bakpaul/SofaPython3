@@ -74,6 +74,36 @@ jobs:
           fi
 
 
+      - name: Set env vars for stubfiles
+        shell: bash
+        run: |
+          #Setup env
+           # Set env vars for tests
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            echo "$WORKSPACE_INSTALL_PATH/lib" >> $GITHUB_PATH
+            echo "$WORKSPACE_INSTALL_PATH/bin" >> $GITHUB_PATH
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            echo "DYLD_LIBRARY_PATH=$WORKSPACE_ARTIFACT_PATH/lib:$SOFA_ROOT/lib:$DYLD_LIBRARY_PATH" | tee -a $GITHUB_ENV
+          else  # Linux
+            echo "LD_LIBRARY_PATH=$WORKSPACE_ARTIFACT_PATH/lib:$SOFA_ROOT/lib:$LD_LIBRARY_PATH" | tee -a $GITHUB_ENV
+          fi
+
+          echo "PYTHONPATH=$WORKSPACE_INSTALL_PATH/lib/python3/site-packages" | tee -a $GITHUB_ENV
+
+
+      - name: Generate stubfiles
+        shell: bash
+        run: |
+
+
+          #Install stubgen
+          ${{ steps.sofa.outputs.python_exe }} -m pip install mypy pybind11-stubgen
+
+
+          #Go back to previous env
+          echo "PYTHONPATH=" | tee -a $GITHUB_ENV
+
+
 
       - name: Set env vars for artifacts
         shell: bash
