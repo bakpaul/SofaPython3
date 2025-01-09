@@ -4,6 +4,8 @@ import shutil
 from sofaStubgen import load_component_list, create_sofa_stubs
 from mypy.stubgen import parse_options, generate_stubs
 import argparse
+import pathlib
+import io
 
 
 
@@ -54,11 +56,15 @@ def pybind11_stub(module_name: str):
         writer=Writer(stub_ext=args.stub_extension),
     )
 
-# This class is used with shutil.copytree to skip already existing files in dest folder.
-class noOverrideFilter:
+class shutilFilter:
     def __init__(self,fromFolder,destFolder):
         self.fromFolder = fromFolder
         self.destFolder = destFolder
+        self.dumpFilePaths = []
+
+    def dumpFileInfo(self,fromFilePath,destFilePath):
+        self.dumpFilePaths.append(f"{os.path.realpath(fromFilePath)};{os.path.realpath(destFilePath)}")
+
 
     def findDestPath(self,currentRelativeToFromPath):
 
@@ -73,18 +79,57 @@ class noOverrideFilter:
 
         return os.path.abspath(os.path.join(self.destFolder,destPath))
 
+    def writeFileInfo(self,filename):
+        output = io.open(filename, mode='a')
+        for path in self.dumpFilePaths:
+            print(path, file=output)
+
+    def __call__(self,path, objectList):
+        return []
+
+# This class is used with shutil.copytree to skip already existing files in dest folder.
+class noOverrideFilter(shutilFilter):
+    def __init__(self,fromFolder,destFolder,dump_file_location=False):
+        super().__init__(fromFolder,destFolder)
+        self.dumpFileLocation = dump_file_location
 
     def __call__(self,path, objectList):
 
         destPath = self.findDestPath(path)
         returnList = []
         for obj in objectList:
-            if(os.path.isfile(os.path.join(destPath,obj))):
+            objDestPath = os.path.join(destPath,obj)
+            objFromPath = os.path.join(path,obj)
+            if(os.path.isfile(objDestPath)):
                 returnList.append(obj)
+            elif(self.dumpFileLocation and os.path.isfile(objFromPath)):
+                self.dumpFileInfo(objFromPath,objDestPath)
+
         return returnList
 
+class dumpFilesFiler(shutilFilter):
+    def __init__(self,fromFolder,destFolder):
+        super().__init__(fromFolder,destFolder)
+
+    def __call__(self,path, objectList):
+
+        destPath = self.findDestPath(path)
+
+        for obj in objectList:
+            objFromPath = os.path.join(path,obj)
+            if(os.path.isfile(objFromPath)):
+                objDestPath = os.path.join(destPath,obj)
+                self.dumpFileInfo(objFromPath,objDestPath)
+        return []
+
+#
+# def dumpFileLocation(fromFolder,destFolder):
+#     allFiles = list(pathlib.Path(fromFolder).rglob("*"))
+
+
+
 #Generate stubs using either pybind11-stubgen or mypy version of stubgen
-def generate_module_stubs(module_name, work_dir, usePybind11_stubgen = False):
+def generate_module_stubs(module_name, work_dir, usePybind11_stubgen = False, dump_file_location = None):
     print(f"Generating stubgen for {module_name} in {work_dir}")
 
     if(usePybind11_stubgen):
@@ -102,13 +147,19 @@ def generate_module_stubs(module_name, work_dir, usePybind11_stubgen = False):
 
 
     if os.path.isdir(module_out_dir):
-        shutil.copytree(module_out_dir, target_dir, dirs_exist_ok=True)
+        if(dump_file_location is not None):
+            DFF = dumpFilesFiler(module_out_dir,target_dir)
+            shutil.copytree(module_out_dir, target_dir, dirs_exist_ok=True,ignore=DFF)
+            DFF.writeFileInfo(dump_file_location)
+        else:
+            shutil.copytree(module_out_dir, target_dir, dirs_exist_ok=True)
+
         print(f"Resync terminated for copying '{module_name}' to '{target_dir}'")
 
     shutil.rmtree("out", ignore_errors=True)
 
 #Generate stubs for components using the factory
-def generate_component_stubs(work_dir,target_name):
+def generate_component_stubs(work_dir,target_name, dump_file_location = None):
     print(f"Generating stubgen for all components in Sofa.Components using custom sofaStubgen.py")
 
     components = load_component_list(target_name)
@@ -121,7 +172,12 @@ def generate_component_stubs(work_dir,target_name):
     if os.path.isdir(sofa_out_dir):
         #For now on we don't want no overriting of file, we thus use the parameter 'ignore=noOverrideFilter(sofa_out_dir,target_dir)' to skip files already existing in dest folder because it might brake the lib.
         # When file merging is supported by create_sofa_stubs this will be removed because then, we will want to override the dest files because we've already did the merge
-        shutil.copytree(sofa_out_dir, target_dir, dirs_exist_ok=True, ignore=noOverrideFilter(sofa_out_dir,target_dir))
+        if(dump_file_location is not None):
+            DFF = noOverrideFilter(sofa_out_dir,target_dir,True)
+            shutil.copytree(sofa_out_dir, target_dir, dirs_exist_ok=True,ignore=DFF)
+            DFF.writeFileInfo(dump_file_location)
+        else:
+            shutil.copytree(sofa_out_dir, target_dir, dirs_exist_ok=True, ignore=noOverrideFilter(sofa_out_dir,target_dir))
         print("Resync terminated.")
 
     shutil.rmtree("out", ignore_errors=True)
