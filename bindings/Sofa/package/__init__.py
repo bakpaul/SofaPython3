@@ -1,8 +1,7 @@
 """
-Package containing the binding for the core of Sofa
--------------------------------------------------
+All SOFA key components supported by the SOFA consortium
 
-Example of use:
+Example:
   .. code-block:: python
 
     import Sofa.Core
@@ -17,14 +16,6 @@ Example of use:
     Sofa.Simulation.init(n)
     Sofa.Simulation.print(n)
 
-Submodules:
-  .. autosummary::
-    :toctree: _autosummary
-
-    Sofa.Core
-    Sofa.Simulation
-    Sofa.Types
-    Sofa.Helper
 """
 
 import sys
@@ -161,7 +152,6 @@ import Sofa.Helper
 import Sofa.Core
 import Sofa.Simulation
 import Sofa.Types
-import Sofa.Components
 import SofaTypes
 
 from .prefab import *
@@ -256,14 +246,18 @@ def getSofaFormattedStringFromException(e):
 
 def sofaExceptHandler(type, value, tb):
     global oldexcepthook
-    """This exception handler, convert python exceptions & traceback into more classical sofa error messages of the form:
-       Message Description
-       Python Stack (most recent are at the end)
-          File file1.py line 4  ...
-          File file1.py line 10 ...
-          File file1.py line 40 ...
-          File file1.py line 23 ...
-            faulty line
+    """This exception handler converts python exceptions & traceback into classical SOFA error messages
+
+       Message:
+
+        .. code-block:: text
+
+            Python Stack (most recent are at the end)
+            File file1.py line 4  ...
+            File file1.py line 10 ...
+            File file1.py line 40 ...
+            File file1.py line 23 ...
+
     """
     h = type.__name__
 
@@ -295,18 +289,26 @@ def pyType2sofaType(v):
 
 
 def msg_error(target, message):
+    """API emitting error messages
+    """
     frameinfo = inspect.getframeinfo(inspect.currentframe().f_back)
     Sofa.Helper.msg_error(target, message, frameinfo.filename, frameinfo.lineno)
 
 def msg_info(target, message):
+    """API emitting information messages
+    """
     frameinfo = inspect.getframeinfo(inspect.currentframe().f_back)
     Sofa.Helper.msg_info(target, message, frameinfo.filename, frameinfo.lineno)
 
 def msg_warning(target, message):
+    """API emitting warning messages
+    """
     frameinfo = inspect.getframeinfo(inspect.currentframe().f_back)
     Sofa.Helper.msg_warning(target, message, frameinfo.filename, frameinfo.lineno)
 
 def msg_deprecated(target, message):
+    """API emitting deprecation messages
+    """
     frameinfo = inspect.getframeinfo(inspect.currentframe().f_back)
     Sofa.Helper.msg_deprecated(target, message, frameinfo.filename, frameinfo.lineno)
 
@@ -383,4 +385,16 @@ def PrefabBuilder(f):
         return selfnode
     SofaPrefabF.__dict__["__original__"] = f
     return SofaPrefabF
+
+def import_sofa_python_scene(path_to_scene : str):
+    """Return a python module containing a SOFA scene"""
+    spec_from_location = importlib.util.spec_from_file_location("sofa.scene", path_to_scene)
+    module_name = importlib.util.module_from_spec(spec_from_location)
+    sys.modules["module.name"] = module_name
+    spec_from_location.loader.exec_module(module_name)
+
+    if not hasattr(module_name, "createScene"):
+        raise Exception("Unable to find 'createScene' in module "+path_to_scene)
+
+    return module_name
 
