@@ -47,9 +47,7 @@ class exportScene():
 
 @PrefabSimulation
 def createScene(rootNode):
-
-    ## TODO : make this affect the actual dt and gravity of the SOFA node
-    rootNode.dt = 0.02
+    rootNode.dt = 0.03
     rootNode.gravity = [0,-9.81,0]
 
     setupLagrangianCollision(rootNode,requiredPlugins={"pluginName":['Sofa.Component.Constraint.Projective',
@@ -77,14 +75,23 @@ def createScene(rootNode):
     # addMass(childNode,massDensity="1.0")
     # addFixation(childNode,ConstraintType.PROJECTIVE,indices="3 39 64")
 
-    childNode2 = rootNode.addSimulatedObject("Liver2",template="Vec3d",elemType=ElementType.TETRA,topologyParams=TopologyParameters(filename="mesh/liver.msh"),collisionType=CollisionType.LAGRANGIAN)
-    childNode2.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
-                                    lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
-                                    massParams=MassParameters(massDensity="1.0"))
-    childNode2.addDirichletConditions(ConstraintType.PROJECTIVE,
-                                      fixationParams=FixationParameters(boxROIs=[0, 3, 0, 2, 5, 2]))
-    childNode2.addVisualModel(color=[1.0,1.0,0.2],extractSurfaceFromParent=True)
-    childNode2.addCollisionModel(collisionParameters =CollisionParameters(points=True,edges=True,triangles=True,proximity=0.2),extractSurfaceFromParent=True)
+    SimulatedLiver = rootNode.addSimulatedObject("Liver2",
+                                                 template="Vec3d",
+                                                 elemType=ElementType.TETRA,
+                                                 topologyParams=TopologyParameters(filename="mesh/liver.msh"),
+                                                 collisionType=CollisionType.LAGRANGIAN)
+
+    SimulatedLiver.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
+                                        lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
+                                         massParams=MassParameters(massDensity="1.0"))
+
+    SimulatedLiver.addCollisionModel(collisionParameters =CollisionParameters(points=True,edges=True,triangles=True,proximity=0.2),
+                                     extractSurfaceFromParent=True)
+
+    SimulatedLiver.addVisualModel(color=[1.0,1.0,0.2],extractSurfaceFromParent=True)
+
+    SimulatedLiver.addDirichletConditions(ConstraintType.PROJECTIVE,
+                                          fixationParams=FixationParameters(boxROIs=[0, 3, 0, 2, 5, 2]))
     return rootNode
 
 
