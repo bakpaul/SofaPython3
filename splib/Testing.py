@@ -65,32 +65,64 @@ def createScene(rootNode):
     #
     #
     # ## TODO : Being able to call "childNode.addAnything" by using the __getattr__ method
-    # childNode = rootNode.addChild("simulated1")
-    # loadMesh(childNode,filename="mesh/liver.msh")
-    # addImplicitODE(childNode)
-    # addLinearSolver(childNode,iterative=True,iterations="25", tolerance="1e-09", threshold="1e-09")
-    # addDynamicTopology(childNode,type=ElementType.TETRA,source="@meshLoader")
-    # childNode.addObject("MechanicalObject")
-    # addLinearElasticity(childNode,ElementType.TETRA, poissonRatio="0.3", youngModulus="3000", method='large')
-    # addMass(childNode,massDensity="1.0")
-    # addFixation(childNode,ConstraintType.PROJECTIVE,indices="3 39 64")
+    Liver0=rootNode.addChild("Liver0")
+    Liver0.addObject("EulerImplicitSolver",name="ODESolver",rayleighStiffness="0.1",rayleighMass="0.1")
+    Liver0.addObject("SparseLDLSolver",name="LinearSolver",template="CompressedRowSparseMatrixMat3x3",parallelInverseProduct="False")
+    Liver0.addObject("MeshGmshLoader",name="meshLoader",filename="mesh/liver.msh")
+    Liver0.addObject("TetrahedronSetTopologyModifier",name="modifier")
+    Liver0.addObject("TetrahedronSetTopologyContainer",name="container",src="@meshLoader")
+    Liver0.addObject("TetrahedronSetGeometryAlgorithms",name="algorithms")
+    Liver0.addObject("MechanicalObject",name="mstate",template="Vec3d")
+    Liver0.addObject("LinearSolverConstraintCorrection",name="constraintCorrection")
+    Liver0.addObject("TetrahedronFEMForceField",name="constitutiveLaw",youngModulus="3000",poissonRatio="0.3",method="large")
+    Liver0.addObject("MeshMatrixMass",name="mass",massDensity="1.0")
+    Liver0.addObject("BoxROI",name="fixedBoxROI",box="0 3 0 2 5 2")
+    Liver0.addObject("FixedProjectiveConstraint",name="fixedConstraints",indices="@fixedBoxROI.indices")
+    Visu=Liver0.addChild("Visu")
+    Visu.addObject("TriangleSetTopologyModifier",name="modifier")
+    Visu.addObject("TriangleSetTopologyContainer",name="container")
+    Visu.addObject("TriangleSetGeometryAlgorithms",name="algorithms")
+    Visu.addObject("Tetra2TriangleTopologicalMapping",name="TopologicalMapping",input="@../container",output="@container")
+    Visu.addObject("OglModel",name="OglModel",topology="@container",color="[1.0, 0.2, 0.8]")
+    Visu.addObject("IdentityMapping",name="Mapping",isMechanical="False")
 
-    SimulatedLiver = rootNode.addSimulatedObject("Liver2",
+
+    SimulatedLiver1 = rootNode.addChild("Liver1")
+    addImplicitODE(SimulatedLiver1)
+    addLinearSolver(SimulatedLiver1,iterative=False, template="CompressedRowSparseMatrixMat3x3")
+    loadMesh(SimulatedLiver1,filename="mesh/liver.msh")
+    addDynamicTopology(SimulatedLiver1,type=ElementType.TETRA,source="@meshLoader")
+    SimulatedLiver1.addObject("MechanicalObject",name="mstate", template='Vec3d')
+    SimulatedLiver1.addObject("LinearSolverConstraintCorrection",name="constraintCorrection")
+    addLinearElasticity(SimulatedLiver1,ElementType.TETRA, poissonRatio="0.3", youngModulus="3000", method='large')
+    addMass(SimulatedLiver1,template='Vec3d',massDensity="1.0")
+    addFixation(SimulatedLiver1,ConstraintType.PROJECTIVE,boxROIs=[0, 3, 0, 2, 5, 2])
+
+    SimulatedLiverVisu = SimulatedLiver1.addChild("Visu")
+    addDynamicTopology(SimulatedLiverVisu,ElementType.TRIANGLES)
+    SimulatedLiverVisu.addObject("Tetra2TriangleTopologicalMapping", name="TopologicalMapping",  input="@../container", output="@container")
+    SimulatedLiverVisu.addObject("OglModel", name="OglModel",  topology="@container",color=[1.0,0.2,0.8])
+    SimulatedLiverVisu.addObject("IdentityMapping",name="Mapping",isMechanical=False)
+
+
+
+
+    SimulatedLiver2 = rootNode.addSimulatedObject("Liver2",
                                                  template="Vec3d",
                                                  elemType=ElementType.TETRA,
                                                  topologyParams=TopologyParameters(filename="mesh/liver.msh"),
                                                  collisionType=CollisionType.LAGRANGIAN)
 
-    SimulatedLiver.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
+    SimulatedLiver2.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
                                         lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
                                          massParams=MassParameters(massDensity="1.0"))
 
-    SimulatedLiver.addCollisionModel(collisionParameters =CollisionParameters(points=True,edges=True,triangles=True,proximity=0.2),
+    SimulatedLiver2.addCollisionModel(collisionParameters =CollisionParameters(points=True,edges=True,triangles=True,proximity=0.2),
                                      extractSurfaceFromParent=True)
 
-    SimulatedLiver.addVisualModel(color=[1.0,1.0,0.2],extractSurfaceFromParent=True)
+    SimulatedLiver2.addVisualModel(color=[1.0,1.0,0.2],extractSurfaceFromParent=True)
 
-    SimulatedLiver.addDirichletConditions(ConstraintType.PROJECTIVE,
+    SimulatedLiver2.addDirichletConditions(ConstraintType.PROJECTIVE,
                                           fixationParams=FixationParameters(boxROIs=[0, 3, 0, 2, 5, 2]))
     return rootNode
 
