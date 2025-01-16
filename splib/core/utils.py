@@ -1,6 +1,16 @@
 from typing import List, Callable, Tuple, Dict
 from functools import wraps
 
+class defaultValueType():
+    def __init__(self):
+        pass
+
+DEFAULT_VALUE = defaultValueType()
+
+def isDefault(obj):
+    return isinstance(obj,defaultValueType)
+
+
 def getParameterSet(name : str,parameterSet : Dict) -> Dict:
     if name in parameterSet:
         if isinstance(parameterSet[name], dict):
@@ -20,5 +30,7 @@ def MapKeywordArg(objectName,*argumentMaps):
             return method(*args,**kwargs)
         return wrapper
     return MapArg
+
+
 
 

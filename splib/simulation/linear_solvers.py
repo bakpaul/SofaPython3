@@ -2,23 +2,21 @@ from splib.core.node_wrapper import PrefabMethod
 from splib.core.utils import *
 
 @PrefabMethod
-@MapKeywordArg("LinearSolver",["parallelInverseProduct","parallelInverseProduct"])
-def addLinearSolver(node,iterative=False,iterations=None,tolerance=None,threshold=None,template=None,constantSparsity=False,parallelInverseProduct=False,**kwargs):
+def addLinearSolver(node,iterative=False,iterations=DEFAULT_VALUE,tolerance=DEFAULT_VALUE,threshold=DEFAULT_VALUE,template=DEFAULT_VALUE,constantSparsity=False,parallelInverseProduct=DEFAULT_VALUE,**kwargs):
     containerParams = getParameterSet("LinearSolver",kwargs)
     if iterative:
-        if iterations:
+        if not isDefault(iterations):
             containerParams["iterations"] = iterations
-        if tolerance:
+        if not isDefault(tolerance):
             containerParams["tolerance"] = tolerance
-        if threshold:
+        if not isDefault(threshold):
             containerParams["threshold"] = threshold
     else:
-        if not(template) and not("template" in containerParams):
+        if isDefault(template) and not("template" in containerParams):
             containerParams["template"] = 'CompressedRowSparseMatrix'
-        else:
+        elif not isDefault(template) :
             containerParams["template"] = template
     kwargs["LinearSolver"] = containerParams
-    kwargs["LinearSolver"]["parallelInverseProduct"] = parallelInverseProduct
 
     if(constantSparsity):
         node.addObject("ConstantSparsityPatternSystem",name='LinearSystem',**kwargs)
@@ -28,6 +26,6 @@ def addLinearSolver(node,iterative=False,iterations=None,tolerance=None,threshol
 
 
     if iterative:
-        node.addObject('CGLinearSolver', name='LinearSolver', **kwargs)
+        node.addObject('CGLinearSolver', name='LinearSolver', parallelInverseProduct=parallelInverseProduct, **kwargs)
     else:
-        node.addObject('SparseLDLSolver', name='LinearSolver', **kwargs)
+        node.addObject('SparseLDLSolver', name='LinearSolver', parallelInverseProduct=parallelInverseProduct, **kwargs)

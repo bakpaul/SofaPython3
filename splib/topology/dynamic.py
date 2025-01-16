@@ -1,55 +1,44 @@
 from splib.core.node_wrapper import PrefabMethod
 from enum import Enum
-from splib.core.utils import MapKeywordArg
+from splib.core.utils import MapKeywordArg, DEFAULT_VALUE
 from splib.core.enum_types import ElementType
 
-# class syntax
 
 
 @PrefabMethod
-@MapKeywordArg("container",["source","src"],["position","position"])
-def addPointTopology(node,position=None,source=None,**kwargs):
-    node.addObject("PointSetTopologyModifier", name="modifier",**kwargs)
-    node.addObject("PointSetTopologyContainer", name="container",**kwargs)
-    node.addObject("PointSetGeometryAlgorithms", name="algorithms",**kwargs)
+def addPointTopology(node,position=DEFAULT_VALUE,source=DEFAULT_VALUE, **kwargs):
+    node.addObject("PointSetTopologyModifier", name="modifier", **kwargs)
+    node.addObject("PointSetTopologyContainer", name="container", src=source, position=position, **kwargs)
+    node.addObject("PointSetGeometryAlgorithms", name="algorithms", **kwargs)
 
 @PrefabMethod
-@MapKeywordArg("container",["source","src"],["position","position"],["edges","edges"])
-def addEdgeTopology(node,position=None,edges=None,source=None,**kwargs):
+def addEdgeTopology(node,position=DEFAULT_VALUE,edges=DEFAULT_VALUE,source=DEFAULT_VALUE,**kwargs):
     node.addObject("EdgeSetTopologyModifier", name="modifier",**kwargs)
-    node.addObject("EdgeSetTopologyContainer", name="container",**kwargs)
+    node.addObject("EdgeSetTopologyContainer", name="container", src=source, position=position, edges=edges, **kwargs)
     node.addObject("EdgeSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@MapKeywordArg("container",["source","src"],["position","position"],["edges","edges"]
-                          ,["triangles","triangles"])
-def addTriangleTopology(node,position=None,edges=None,triangles=None,source=None,**kwargs):
+def addTriangleTopology(node,position=DEFAULT_VALUE,edges=DEFAULT_VALUE,triangles=DEFAULT_VALUE,source=DEFAULT_VALUE,**kwargs):
     node.addObject("TriangleSetTopologyModifier", name="modifier",**kwargs)
-    node.addObject("TriangleSetTopologyContainer", name="container",**kwargs)
+    node.addObject("TriangleSetTopologyContainer", name="container", src=source, position=position, edges=edges, triangles=triangles, **kwargs)
     node.addObject("TriangleSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@MapKeywordArg("container",["source","src"],["position","position"],["edges","edges"]
-                          ,["quads","quads"])
-def addQuadTopology(node,position=None,edges=None,quads=None,source=None,**kwargs):
+def addQuadTopology(node,position=DEFAULT_VALUE,edges=DEFAULT_VALUE,quads=DEFAULT_VALUE,source=DEFAULT_VALUE,**kwargs):
     node.addObject("QuadSetTopologyModifier", name="modifier",**kwargs)
-    node.addObject("QuadSetTopologyContainer", name="container",**kwargs)
+    node.addObject("QuadSetTopologyContainer", name="container", src=source, position=position, edges=edges, quads=quads, **kwargs)
     node.addObject("QuadSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@MapKeywordArg("container",["source","src"],["position","position"],["edges","edges"]
-                          ,["triangles","triangles"],["tetrahedra","tetrahedra"])
-def addTetrahedronTopology(node,position=None,edges=None,triangles=None,tetrahedra=None,source=None,**kwargs):
+def addTetrahedronTopology(node,position=DEFAULT_VALUE,edges=DEFAULT_VALUE,triangles=DEFAULT_VALUE,tetrahedra=DEFAULT_VALUE,source=DEFAULT_VALUE,**kwargs):
     node.addObject("TetrahedronSetTopologyModifier", name="modifier",**kwargs)
-    node.addObject("TetrahedronSetTopologyContainer", name="container",**kwargs)
+    node.addObject("TetrahedronSetTopologyContainer", name="container", src=source, position=position, edges=edges, triangles=triangles, tetrahedra=tetrahedra, **kwargs)
     node.addObject("TetrahedronSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 @PrefabMethod
-@MapKeywordArg("container",["source","src"],["position","position"],["edges","edges"]
-                          ,["quads","quads"],["hexahedra","hexahedra"])
-def addHexahedronTopology(node,position=None,edges=None,quads=None,hexahedra=None,source=None,**kwargs):
+def addHexahedronTopology(node,position=DEFAULT_VALUE,edges=DEFAULT_VALUE,quads=DEFAULT_VALUE,hexahedra=DEFAULT_VALUE,source=DEFAULT_VALUE,**kwargs):
     node.addObject("HexahedronSetTopologyModifier", name="modifier",**kwargs)
-    node.addObject("HexahedronSetTopologyContainer", name="container",**kwargs)
+    node.addObject("HexahedronSetTopologyContainer", name="container", src=source, position=position, edges=edges, quads=quads, hexahedra=hexahedra, **kwargs)
     node.addObject("HexahedronSetGeometryAlgorithms", name="algorithms",**kwargs)
 
 def addDynamicTopology(node,type:ElementType,**kwargs):

@@ -1,8 +1,7 @@
 from splib.core.node_wrapper import PrefabMethod
-from splib.core.utils import MapKeywordArg
+from splib.core.utils import DEFAULT_VALUE
 
 @PrefabMethod
-@MapKeywordArg("container",["source","src"])
-def addStaticTopology(node,source=None,**kwargs):
-    node.addObject("MeshTopology", name="container",**kwargs)
+def addStaticTopology(node,source=DEFAULT_VALUE,**kwargs):
+    node.addObject("MeshTopology", name="container", src=source, **kwargs)
 

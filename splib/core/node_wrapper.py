@@ -1,5 +1,5 @@
 from functools import wraps
-
+from splib.core.utils import defaultValueType
 # The two classes are not merged because one could want to use a PrefabMethod
 # (enabling to pass dictionary fixing params) without wanting to use a full PrefabSimulation
 
@@ -12,11 +12,13 @@ class BasePrefab(object):
     def __getattr__(self, item):
         return getattr(self.node,item)
 
+
 class ObjectWrapper(BasePrefab):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
 
     def addObject(self,*args, **kwargs):
+        # TODO: add warnings when kwargs are nonsense
         parameters = {}
         # Expand any parameter that has been set by the user in a custom dictionary
         # and having the same key as the component name
@@ -30,7 +32,7 @@ class ObjectWrapper(BasePrefab):
             if param in parameters:
                 if not(param == "name"):
                     print("[warning] You are redefining the parameter '"+ param + "' of object "  + str(args[0]))
-            elif not(isinstance(kwargs[param], dict)):
+            elif not(isinstance(kwargs[param], dict)) and not(isinstance(kwargs[param],defaultValueType)):
                 parameters = {**parameters,param:kwargs[param]}
 
         return self.node.addObject(*args,**parameters)

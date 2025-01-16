@@ -45,6 +45,7 @@ class exportScene():
             self.__dict__[key] = value
 
 
+# TODO change naming this is not a real prefab !!!
 @PrefabSimulation
 def createScene(rootNode):
     rootNode.dt = 0.03
@@ -114,7 +115,7 @@ def createScene(rootNode):
                                                  collisionType=CollisionType.LAGRANGIAN)
 
     SimulatedLiver2.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
-                                        lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
+                                         lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
                                          massParams=MassParameters(massDensity="1.0"))
 
     SimulatedLiver2.addCollisionModel(collisionParameters =CollisionParameters(points=True,edges=True,triangles=True,proximity=0.2),

@@ -72,6 +72,8 @@ def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels",backgr
 
     return node
 
+
+# TODO add alarm settings
 @PrefabMethod
 def setupLagrangianCollision(node,  displayFlags = "showVisualModels",backgroundColor=[1,1,1,1], parallelComputing=False, stick=False, frictionCoef=0.0, tolerance=0.0, maxIterations=100, **kwargs):
     node.addObject('VisualStyle', displayFlags=displayFlags)
@@ -117,6 +119,7 @@ def setupLagrangianCollision(node,  displayFlags = "showVisualModels",background
         node.addObject('CollisionResponse',name="ContactManager", response="StickContactConstraint", responseParams="tol="+str(tolerance),**kwargs)
     else:
         node.addObject('CollisionResponse',name="ContactManager", response="FrictionContact", responseParams="mu="+str(frictionCoef),**kwargs)
+
     node.addObject('NewProximityIntersection' ,name="Distance", **kwargs)
     node.addObject('GenericConstraintSolver',name="ConstraintSolver", tolerance=tolerance, maxIterations=maxIterations, multithreading=parallelComputing,**kwargs)
     node.addObject("ConstraintAttachButtonSetting")
