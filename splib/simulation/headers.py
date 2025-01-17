@@ -1,6 +1,8 @@
 from splib.core.node_wrapper import ReusableMethod
 from enum import Enum
 
+from applications.plugins.SofaPython3.splib.core.utils import DEFAULT_VALUE
+
 
 class CollisionType(Enum):
     NONE = 1
@@ -35,7 +37,7 @@ def setupDefaultHeader(node, displayFlags = "showVisualModels", backgroundColor=
 
 
 @ReusableMethod
-def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels",backgroundColor=[1,1,1,1], stick=False, parallelComputing=False,**kwargs):
+def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels",backgroundColor=[1,1,1,1], stick=False, parallelComputing=False, alarmDistance=DEFAULT_VALUE, contactDistance=DEFAULT_VALUE, **kwargs):
     node.addObject('VisualStyle', displayFlags=displayFlags)
     node.addObject('BackgroundSetting', color=backgroundColor)
 
@@ -68,14 +70,13 @@ def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels",backgr
         node.addObject('CollisionResponse',name="ContactManager", response="BarycentricStickContact",**kwargs)
     else:
         node.addObject('CollisionResponse',name="ContactManager", response="BarycentricPenalityContact",**kwargs)
-    node.addObject('LocalMinDistance' ,name="Distance", **kwargs)
+    node.addObject('LocalMinDistance' ,name="Distance", alarmDistance=alarmDistance, contactDistance=contactDistance, **kwargs)
 
     return node
 
 
-# TODO add alarm settings
 @ReusableMethod
-def setupLagrangianCollision(node,  displayFlags = "showVisualModels",backgroundColor=[1,1,1,1], parallelComputing=False, stick=False, frictionCoef=0.0, tolerance=0.0, maxIterations=100, **kwargs):
+def setupLagrangianCollision(node,  displayFlags = "showVisualModels",backgroundColor=[1,1,1,1], parallelComputing=False, stick=False, alarmDistance=DEFAULT_VALUE, contactDistance=DEFAULT_VALUE, frictionCoef=0.0, tolerance=0.0, maxIterations=100, **kwargs):
     node.addObject('VisualStyle', displayFlags=displayFlags)
     node.addObject('BackgroundSetting', color=backgroundColor)
 
@@ -120,7 +121,7 @@ def setupLagrangianCollision(node,  displayFlags = "showVisualModels",background
     else:
         node.addObject('CollisionResponse',name="ContactManager", response="FrictionContact", responseParams="mu="+str(frictionCoef),**kwargs)
 
-    node.addObject('NewProximityIntersection' ,name="Distance", **kwargs)
+    node.addObject('NewProximityIntersection' ,name="Distance", alarmDistance=alarmDistance, contactDistance=contactDistance, **kwargs)
     node.addObject('GenericConstraintSolver',name="ConstraintSolver", tolerance=tolerance, maxIterations=maxIterations, multithreading=parallelComputing,**kwargs)
     node.addObject("ConstraintAttachButtonSetting")
 
