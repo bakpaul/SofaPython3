@@ -57,8 +57,16 @@ class ChildWrapper(ObjectWrapper):
 def PrefabMethod(method):
     @wraps(method)
     def wrapper(*args, **kwargs):
-        if len(args)>1:
-            return method(ObjectWrapper(args[0]),*args[1:],**kwargs)
+
+        node = args[0]
+        #We don't want to wrap an object that is already wrapped
+        if( not isinstance(node,ObjectWrapper) ):
+            node = ObjectWrapper(node)
         else:
-            return method(ObjectWrapper(args[0]),**kwargs)
+            print("Not wrapping this node as it is already wrapped in " + str(type(node)))
+
+        if len(args)>1:
+            return method(node,*args[1:],**kwargs)
+        else:
+            return method(node,**kwargs)
     return wrapper

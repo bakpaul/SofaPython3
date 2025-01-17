@@ -10,6 +10,9 @@ from splib.mechanics.fix_points import *
 from splib.topology.loader import *
 from splib.core.node_wrapper import *
 
+from splib.core.node_wrapper import ChildWrapper, ObjectWrapper
+
+
 class displayNode():
     def __init__(self,_level=0):
         self.prefix = ""

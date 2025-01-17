@@ -1,6 +1,5 @@
-from splib.core.node_wrapper import BasePrefab
+from splib.core.node_wrapper import BasePrefab, PrefabMethod
 from splib.core.utils import getParameterSet
-
 from splib.topology.loader import *
 from splib.topology.dynamic import *
 from splib.topology.static import *

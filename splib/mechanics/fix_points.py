@@ -10,10 +10,10 @@ def addFixation(node,type:ConstraintType,boxROIs=DEFAULT_VALUE, sphereROIs=DEFAU
     if (isDefault(indices)):
         if(not isDefault(boxROIs)):
             node.addObject("BoxROI",name='fixedBoxROI',box=boxROIs,**kwargs)
-            kwargs["fixedConstraints"]["indices"]="@fixedBoxROI.indices"
+            indices="@fixedBoxROI.indices"
         if(not isDefault(sphereROIs)):
             node.addObject("SphereROI",name='fixedSphereROI',centers=sphereROIs[0],radii=sphereROIs[1],**kwargs)
-            kwargs["fixedConstraints"]["indices"]="@fixedSphereROI.indices"
+            indices="@fixedSphereROI.indices"
 
     match type:
         case ConstraintType.WEAK:
