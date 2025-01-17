@@ -1,11 +1,11 @@
-from splib.core.node_wrapper import PrefabMethod
+from splib.core.node_wrapper import ReusableMethod
 from splib.core.utils import isDefault, DEFAULT_VALUE
 from splib.core.enum_types import ConstraintType
 from enum import Enum
 
 
 ##box
-@PrefabMethod
+@ReusableMethod
 def addFixation(node,type:ConstraintType,boxROIs=DEFAULT_VALUE, sphereROIs=DEFAULT_VALUE, indices=DEFAULT_VALUE, fixAll=DEFAULT_VALUE,**kwargs):
     if (isDefault(indices)):
         if(not isDefault(boxROIs)):

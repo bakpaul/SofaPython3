@@ -1,11 +1,11 @@
-from splib.core.node_wrapper import BasePrefab, PrefabMethod
+from splib.core.node_wrapper import BaseWrapper, ReusableMethod
 from splib.core.utils import getParameterSet
 from splib.topology.loader import *
 from splib.topology.dynamic import *
 from splib.topology.static import *
 
 
-class NonSimulatedObject(BasePrefab):
+class NonSimulatedObject(BaseWrapper):
     def __init__(self, node,
                  template, elemType:ElementType=None,_dynamicTopo=False,filename=None, source=None,*args,**kwargs):
         super().__init__(node)

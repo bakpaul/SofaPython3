@@ -1,9 +1,9 @@
-from splib.core.node_wrapper import PrefabMethod
+from splib.core.node_wrapper import ReusableMethod
 from splib.core.utils import DEFAULT_VALUE
 from splib.core.enum_types import ElementType
 
 
-@PrefabMethod
+@ReusableMethod
 def addLinearElasticity(node,elem:ElementType,youngModulus=DEFAULT_VALUE, poissonRatio=DEFAULT_VALUE, method=DEFAULT_VALUE,**kwargs):
     match elem:
         case ElementType.EDGES:

@@ -1,7 +1,7 @@
-from splib.core.node_wrapper import PrefabMethod
+from splib.core.node_wrapper import ReusableMethod
 from splib.core.utils import *
 
-@PrefabMethod
+@ReusableMethod
 def addLinearSolver(node,iterative=False,iterations=DEFAULT_VALUE,tolerance=DEFAULT_VALUE,threshold=DEFAULT_VALUE,template=DEFAULT_VALUE,constantSparsity=False,parallelInverseProduct=DEFAULT_VALUE,**kwargs):
     containerParams = getParameterSet("LinearSolver",kwargs)
     if iterative:

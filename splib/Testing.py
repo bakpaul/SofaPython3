@@ -48,7 +48,6 @@ class exportScene():
             self.__dict__[key] = value
 
 
-# TODO change naming this is not a real prefab !!!
 @PrefabSimulation
 def createScene(rootNode):
     rootNode.dt = 0.03
@@ -70,7 +69,7 @@ def createScene(rootNode):
     #
     # ## TODO : Being able to call "childNode.addAnything" by using the __getattr__ method
     Liver0=rootNode.addChild("Liver0")
-    Liver0.addObject("EulerImplicitSolver",name="ODESolver",rayleighStiffness="0.1",rayleighMass="0.1")
+    Liver0.addObject("EulerImplicitSolver",name="ODESolver",rayleighStiffness="0",rayleighMass="0")
     Liver0.addObject("SparseLDLSolver",name="LinearSolver",template="CompressedRowSparseMatrixMat3x3",parallelInverseProduct="False")
     Liver0.addObject("MeshGmshLoader",name="meshLoader",filename="mesh/liver.msh")
     Liver0.addObject("TetrahedronSetTopologyModifier",name="modifier")
@@ -79,7 +78,7 @@ def createScene(rootNode):
     Liver0.addObject("MechanicalObject",name="mstate",template="Vec3d")
     Liver0.addObject("LinearSolverConstraintCorrection",name="constraintCorrection")
     Liver0.addObject("TetrahedronFEMForceField",name="constitutiveLaw",youngModulus="3000",poissonRatio="0.3",method="large")
-    Liver0.addObject("MeshMatrixMass",name="mass",massDensity="1.0")
+    Liver0.addObject("MeshMatrixMass",name="mass",massDensity="1")
     Liver0.addObject("BoxROI",name="fixedBoxROI",box="0 3 0 2 5 2")
     Liver0.addObject("FixedProjectiveConstraint",name="fixedConstraints",indices="@fixedBoxROI.indices")
     Visu=Liver0.addChild("Visu")
@@ -99,7 +98,7 @@ def createScene(rootNode):
     SimulatedLiver1.addObject("MechanicalObject",name="mstate", template='Vec3d')
     SimulatedLiver1.addObject("LinearSolverConstraintCorrection",name="constraintCorrection")
     addLinearElasticity(SimulatedLiver1,ElementType.TETRA, poissonRatio="0.3", youngModulus="3000", method='large')
-    addMass(SimulatedLiver1,template='Vec3d',massDensity="1.0")
+    addMass(SimulatedLiver1,template='Vec3d',massDensity="2")
     addFixation(SimulatedLiver1,ConstraintType.PROJECTIVE,boxROIs=[0, 3, 0, 2, 5, 2])
 
     SimulatedLiverVisu = SimulatedLiver1.addChild("Visu")
@@ -119,7 +118,7 @@ def createScene(rootNode):
 
     SimulatedLiver2.addConstitutiveModel(law=ConstitutiveLaw.LINEAR_COROT,
                                          lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
-                                         massParams=MassParameters(massDensity="1.0"))
+                                         massParams=MassParameters(massDensity="3"))
 
     SimulatedLiver2.addCollisionModel(collisionParameters =CollisionParameters(points=True,edges=True,triangles=True,proximity=0.2),
                                      extractSurfaceFromParent=True)

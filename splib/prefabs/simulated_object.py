@@ -1,6 +1,6 @@
 from typing import List, Callable, Tuple, Dict
-from splib.core.node_wrapper import BasePrefab
-from splib.core.utils import getParameterSet
+from splib.core.node_wrapper import BaseWrapper
+from splib.core.utils import getParameterSet, isDefault
 from splib.prefabs.parameters  import *
 from splib.simulation.headers import *
 from splib.simulation.ode_solvers import *
@@ -14,12 +14,15 @@ from splib.topology.dynamic import *
 from splib.topology.static import *
 from splib.core.enum_types import *
 
-class SimulatedObject(BasePrefab):
+from applications.plugins.SofaPython3.splib.core.utils import DEFAULT_VALUE
+
+
+class SimulatedObject(BaseWrapper):
 
     mappedTopology : Dict
 
     # This constructor initialize the component until the Mechanical Object.
-    # Because @PrefabMethod are used, kwargs can contain dictionary which associated key word correspond to the object name
+    # Because @ReusableMethod are used, kwargs can contain dictionary which associated key word correspond to the object name
     # Here the name list you can affect is :
     # - ODESolver               (added by add_____ODE)
     # - LinearSolver            (added by addLinearSolver)
@@ -52,13 +55,13 @@ class SimulatedObject(BasePrefab):
 
         addLinearSolver(self.node,iterative=(SolverType == SolverType.ITERATIVE),**(linearSolverParams.__dict__),**kwargs)
 
-        if((topologyParams.source is not None) and (topologyParams.filename is not None)):
+        if(not(isDefault(topologyParams.source)) and not(isDefault(topologyParams.filename))):
             print("[Warning] you cannot have multiple sources for your topology, taking filename")
 
-        if(topologyParams.filename is not None):
+        if(not(isDefault(topologyParams.filename))):
             loadMesh(self.node,topologyParams.filename, **kwargs)
             topoSrc = "@meshLoader"
-        elif(topologyParams.source is not None):
+        elif(not(isDefault(topologyParams.source ))):
             topoSrc = topologyParams.source
 
         if(topologyParams.generateSparseGrid):
@@ -130,8 +133,8 @@ class SimulatedObject(BasePrefab):
                 return
 
 
-    @MapKeywordArg("OglModel",["color","color"])
-    def addVisualModel(self,color=None,extractSurfaceFromParent=False,filename=None,source=None,elemTypeInFile:ElementType=None,**kwargs):
+    # @MapKeywordArg("OglModel",["color","color"])
+    def addVisualModel(self,color=DEFAULT_VALUE,extractSurfaceFromParent=False,filename=None,source=None,elemTypeInFile:ElementType=None,**kwargs):
         if(    (extractSurfaceFromParent and (filename is not None))
             or (extractSurfaceFromParent and (source is not None))
             or ((filename is not None) and (source is not None))):
@@ -145,7 +148,7 @@ class SimulatedObject(BasePrefab):
 
         self.visualModel = self.node.addChild("VisualModel")
         SimulatedObject._addMappedSurface( self.visualModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,filename=filename, source=source,elemInFile=elemTypeInFile,**kwargs)
-        self.visualModel.addObject("OglModel", name="OglModel",  topology="@container",**kwargs)
+        self.visualModel.addObject("OglModel", name="OglModel", color=color,  topology="@container",**kwargs)
 
         if((filename is not None) or (source is not None)):
             if(self.template == "Rigid3"):

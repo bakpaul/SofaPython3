@@ -1,9 +1,9 @@
-from splib.core.node_wrapper import PrefabMethod
+from splib.core.node_wrapper import ReusableMethod
 from splib.core.utils import DEFAULT_VALUE
 from splib.core.enum_types import ElementType
 
 
-@PrefabMethod
+@ReusableMethod
 def addHyperelasticity(node,elem:ElementType,materialName=DEFAULT_VALUE, parameterSet=DEFAULT_VALUE, matrixRegularization=DEFAULT_VALUE,**kwargs):
     match elem:
         case ElementType.TETRA:

@@ -1,4 +1,4 @@
-from splib.core.node_wrapper import PrefabMethod
+from splib.core.node_wrapper import ReusableMethod
 from enum import Enum
 
 
@@ -8,7 +8,7 @@ class CollisionType(Enum):
     LAGRANGIAN = 3
 
 
-@PrefabMethod
+@ReusableMethod
 def setupDefaultHeader(node, displayFlags = "showVisualModels", backgroundColor=[1,1,1,1], parallelComputing=False,**kwargs):
 
     node.addObject('VisualStyle', displayFlags=displayFlags)
@@ -34,7 +34,7 @@ def setupDefaultHeader(node, displayFlags = "showVisualModels", backgroundColor=
     return node
 
 
-@PrefabMethod
+@ReusableMethod
 def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels",backgroundColor=[1,1,1,1], stick=False, parallelComputing=False,**kwargs):
     node.addObject('VisualStyle', displayFlags=displayFlags)
     node.addObject('BackgroundSetting', color=backgroundColor)
@@ -74,7 +74,7 @@ def setupPenalityCollisionHeader(node,  displayFlags = "showVisualModels",backgr
 
 
 # TODO add alarm settings
-@PrefabMethod
+@ReusableMethod
 def setupLagrangianCollision(node,  displayFlags = "showVisualModels",backgroundColor=[1,1,1,1], parallelComputing=False, stick=False, frictionCoef=0.0, tolerance=0.0, maxIterations=100, **kwargs):
     node.addObject('VisualStyle', displayFlags=displayFlags)
     node.addObject('BackgroundSetting', color=backgroundColor)

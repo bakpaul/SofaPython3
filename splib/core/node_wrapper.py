@@ -1,10 +1,10 @@
 from functools import wraps
 from splib.core.utils import defaultValueType
-# The two classes are not merged because one could want to use a PrefabMethod
+# The two classes are not merged because one could want to use a ReusableMethod
 # (enabling to pass dictionary fixing params) without wanting to use a full PrefabSimulation
 
 
-class BasePrefab(object):
+class BaseWrapper(object):
 
     def __init__(self,node):
         self.node = node
@@ -13,12 +13,11 @@ class BasePrefab(object):
         return getattr(self.node,item)
 
 
-class ObjectWrapper(BasePrefab):
+class ObjectWrapper(BaseWrapper):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
 
     def addObject(self,*args, **kwargs):
-        # TODO: add warnings when kwargs are nonsense
         parameters = {}
         # Expand any parameter that has been set by the user in a custom dictionary
         # and having the same key as the component name
@@ -27,11 +26,14 @@ class ObjectWrapper(BasePrefab):
             if kwargs["name"] in kwargs:
                 if isinstance(kwargs[kwargs["name"]], dict):
                     parameters = {**parameters, **kwargs[kwargs["name"]]}
+                else:
+                    print("[Warning] You are passing a keyword arg with the same name as one obj without it being a Dict, it will not be used. ")
+
         # Add all the parameters from kwargs that are not dictionary
         for param in kwargs:
             if param in parameters:
                 if not(param == "name"):
-                    print("[warning] You are redefining the parameter '"+ param + "' of object "  + str(args[0]))
+                    print("[Warning] You are redefining the parameter '"+ param + "' of object "  + str(args[0]))
             elif not(isinstance(kwargs[param], dict)) and not(isinstance(kwargs[param],defaultValueType)):
                 parameters = {**parameters,param:kwargs[param]}
 
@@ -54,16 +56,15 @@ class ChildWrapper(ObjectWrapper):
 
 
 
-def PrefabMethod(method):
+def ReusableMethod(method):
     @wraps(method)
     def wrapper(*args, **kwargs):
 
         node = args[0]
-        #We don't want to wrap an object that is already wrapped
+        # We don't want to wrap an object that is already wrapped
+        # It wouldn't break anything but nodes might get wrapped and wrapped again multiplying redirections...
         if( not isinstance(node,ObjectWrapper) ):
             node = ObjectWrapper(node)
-        else:
-            print("Not wrapping this node as it is already wrapped in " + str(type(node)))
 
         if len(args)>1:
             return method(node,*args[1:],**kwargs)

@@ -1,6 +1,6 @@
-from splib.core.node_wrapper import PrefabMethod
+from splib.core.node_wrapper import ReusableMethod
 
-@PrefabMethod
+@ReusableMethod
 def loadMesh(node,filename,**kwargs):
     splitedName = filename.split('.')
     if len(splitedName) == 1:
