@@ -14,7 +14,7 @@ from splib.topology.dynamic import *
 from splib.topology.static import *
 from splib.core.enum_types import *
 
-from applications.plugins.SofaPython3.splib.core.utils import DEFAULT_VALUE
+from splib.core.utils import DEFAULT_VALUE
 
 
 class SimulatedObject(BaseWrapper):
@@ -159,7 +159,11 @@ class SimulatedObject(BaseWrapper):
             self.visualModel.addObject("IdentityMapping",name="Mapping",isMechanical=False,**kwargs)
         return self.visualModel
 
-    def addCollisionModel(self,collisionParameters:CollisionParameters,extractSurfaceFromParent=False,filename=None,source=None,elemTypeInFile:ElementType=None,**kwargs):
+    def addCollisionModel(self,name:str,collisionParameters:CollisionParameters,extractSurfaceFromParent=False,filename=None,source=None,elemTypeInFile:ElementType=None,**kwargs):
+        if(name in self.__dict__):
+            print("[ERROR] A mapped node with the name " + name + " already exist.")
+            return
+
         if(    (extractSurfaceFromParent and (filename is not None))
                 or (extractSurfaceFromParent and (source is not None))
                 or ((filename is not None) and (source is not None))):
@@ -171,45 +175,46 @@ class SimulatedObject(BaseWrapper):
             print("[Error] You should specify either a surface extraction, a source or a filename, the surface will be extracted by default. ")
             extractSurfaceFromParent = True
 
-        self.collisionModel = self.node.addChild("CollisionModel")
-        SimulatedObject._addMappedSurface( self.collisionModel,self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,filename=filename,source=source,elemInFile=elemTypeInFile,**kwargs)
+        setattr(self,name,self.node.addChild(name))
+        SimulatedObject._addMappedSurface( getattr(self,name),self.elemType,extractSurfaceFromParent=extractSurfaceFromParent,filename=filename,source=source,elemInFile=elemTypeInFile,**kwargs)
         if(extractSurfaceFromParent):
-            self.collisionModel.addObject("MechanicalObject",name="mstate",rest_position="@../mstate.rest_position")
+            getattr(self,name).addObject("MechanicalObject",name="mstate",rest_position="@../mstate.rest_position")
         else:
-            self.collisionModel.addObject("MechanicalObject",name="mstate",src="@container")
+            getattr(self,name).addObject("MechanicalObject",name="mstate",src="@container")
 
 
-        addCollisionModels( self.collisionModel,**(collisionParameters.__dict__),**kwargs)
+        addCollisionModels( getattr(self,name),**(collisionParameters.__dict__),**kwargs)
 
 
         if((filename is not None) or (source is not None)):
             if(self.template == "Rigid3"):
-                self.collisionModel.addObject("RigidMapping",name="Mapping",isMechanical=True,globalToLocalCoords=True,**kwargs)
+                getattr(self,name).addObject("RigidMapping",name="Mapping",isMechanical=True,globalToLocalCoords=True,**kwargs)
             else:
-                self.collisionModel.addObject("BarycentricMapping",name="Mapping",isMechanical=True,**kwargs)
+                getattr(self,name).addObject("BarycentricMapping",name="Mapping",isMechanical=True,**kwargs)
         elif(extractSurfaceFromParent):
-            self.collisionModel.addObject("IdentityMapping",name="Mapping",isMechanical=True,**kwargs)
+            getattr(self,name).addObject("IdentityMapping",name="Mapping",isMechanical=True,**kwargs)
         return self.collisionModel
 
+
     def addMappedTopology(self, name, template, elemType:ElementType,dynamicTopo=False,isMechanical=False,**kwargs):
-        if(name in self.mappedTopology):
+        if(name in self.__dict__):
             print("[ERROR] A mapped node with the name " + name + " already exist.")
             return
 
-        self.mappedTopology[name] = self.node.addChild(name)
+        setattr(self,name,self.node.addChild(name))
 
 
         if(dynamicTopo):
-            addDynamicTopology(self.mappedTopology[name],elemType,**kwargs)
+            addDynamicTopology(getattr(self,name),elemType,**kwargs)
         else:
-            addStaticTopology(self.mappedTopology[name],**kwargs)
+            addStaticTopology(getattr(self,name),**kwargs)
 
-        self.mappedTopology[name].addObject("MechanicalObject",name="mstate", template=template, **kwargs)
+        getattr(self,name).addObject("MechanicalObject",name="mstate", template=template, **kwargs)
 
 
         if(self.template == "Rigid3"):
-            self.mappedTopology[name].addObject("RigidMapping",name="Mapping",isMechanical=isMechanical,globalToLocalCoords=True,**kwargs)
+            getattr(self,name).addObject("RigidMapping",name="Mapping",isMechanical=isMechanical,globalToLocalCoords=True,**kwargs)
         else:
-            self.mappedTopology[name].addObject("BarycentricMapping",name="Mapping",isMechanical=isMechanical,**kwargs)
+            getattr(self,name).addObject("BarycentricMapping",name="Mapping",isMechanical=isMechanical,**kwargs)
 
-        return self.mappedTopology[name]
+        return getattr(self,name)

@@ -1,7 +1,7 @@
 from splib.core.node_wrapper import ReusableMethod
 from enum import Enum
 
-from applications.plugins.SofaPython3.splib.core.utils import DEFAULT_VALUE
+from splib.core.utils import DEFAULT_VALUE
 
 
 class CollisionType(Enum):
@@ -119,7 +119,7 @@ def setupLagrangianCollision(node,  displayFlags = "showVisualModels",background
     if(stick):
         node.addObject('CollisionResponse',name="ContactManager", response="StickContactConstraint", responseParams="tol="+str(tolerance),**kwargs)
     else:
-        node.addObject('CollisionResponse',name="ContactManager", response="FrictionContact", responseParams="mu="+str(frictionCoef),**kwargs)
+        node.addObject('CollisionResponse',name="ContactManager", response="FrictionContactConstraint", responseParams="mu="+str(frictionCoef),**kwargs)
 
     node.addObject('NewProximityIntersection' ,name="Distance", alarmDistance=alarmDistance, contactDistance=contactDistance, **kwargs)
     node.addObject('GenericConstraintSolver',name="ConstraintSolver", tolerance=tolerance, maxIterations=maxIterations, multithreading=parallelComputing,**kwargs)

@@ -38,7 +38,8 @@ class exportScene():
 
     def addChild(self,name:str):
         print(name + '=' + self.name+".addChild(\"" + name + "\")")
-        return exportScene(name)
+        setattr(self,name,exportScene(name))
+        return getattr(self,name)
 
     def __setattr__(self, key, value):
         if(not(key == "name")):
@@ -120,7 +121,7 @@ def createScene(rootNode):
                                          lawParams=LinearConstitutiveLawParameters(poissonRatio="0.3", youngModulus="3000", method='large'),
                                          massParams=MassParameters(massDensity="3"))
 
-    SimulatedLiver2.addCollisionModel(collisionParameters =CollisionParameters(points=True,edges=True,triangles=True,proximity=0.2),
+    SimulatedLiver2.addCollisionModel(name="Collision",collisionParameters =CollisionParameters(points=True,edges=True,triangles=True,proximity=0.2),
                                      extractSurfaceFromParent=True)
 
     SimulatedLiver2.addVisualModel(color=[1.0,1.0,0.2],extractSurfaceFromParent=True)

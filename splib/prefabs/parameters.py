@@ -48,7 +48,7 @@ class FixationParameters(object):
         self.fixAll=fixAll
 
 class CollisionParameters(object):
-    def __init__(self,points=False, edges=False,triangles=False, spheres=False,tetrahedron=False,selfCollision=False, proximity=DEFAULT_VALUE, contactStiffness=DEFAULT_VALUE, contactFriction=DEFAULT_VALUE,spheresRadius=DEFAULT_VALUE):
+    def __init__(self,points=False, edges=False,triangles=False, spheres=False,tetrahedron=False,selfCollision=False, proximity=DEFAULT_VALUE, group=DEFAULT_VALUE, contactStiffness=DEFAULT_VALUE, contactFriction=DEFAULT_VALUE,spheresRadius=DEFAULT_VALUE):
         self.points=points
         self.edges=edges
         self.triangles=triangles
@@ -56,6 +56,7 @@ class CollisionParameters(object):
         self.tetrahedron=tetrahedron
         self.selfCollision=selfCollision
         self.proximity=proximity
+        self.group=group
         self.contactStiffness=contactStiffness
         self.contactFriction=contactFriction
         self.spheresRadius=spheresRadius
