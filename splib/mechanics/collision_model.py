@@ -13,6 +13,6 @@ def addCollisionModels(node,points=False, edges=False,triangles=False, spheres=F
     if(triangles):
         node.addObject("TriangleCollisionModel",name="TriangleCollision", selfCollision=selfCollision, proximity=proximity, contactStiffness=contactStiffness, contactFriction=contactFriction, group=group,**kwargs)
     if(spheres):
-        node.addObject("SphereCollisionModel",name="SphereCollision", selfCollision=selfCollision, proximity=proximity, contactStiffness=contactStiffness, contactFriction=contactFriction, group=group, spheresRadius=spheresRadius, **kwargs)
+        node.addObject("SphereCollisionModel",name="SphereCollision", selfCollision=selfCollision, proximity=proximity, contactStiffness=contactStiffness, contactFriction=contactFriction, group=group, radius=spheresRadius, **kwargs)
     if(tetrahedron):
         node.addObject("TetrahedronCollisionModel",name="TetraCollision", selfCollision=selfCollision, proximity=proximity, contactStiffness=contactStiffness, contactFriction=contactFriction, group=group,**kwargs)
