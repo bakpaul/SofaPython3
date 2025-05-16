@@ -206,7 +206,7 @@ jobs:
           ./bin/Bindings.Modules.Tests${{ steps.sofa.outputs.exe }}
 
       - name: notify dashboard
-        if: always() && startsWith(github.repository, 'sofa-framework') && startsWith(github.ref, 'refs/heads/master') # we are not on a fork and on master
+        if: always()
         env:       
           DASH_AUTH: ${{ secrets.PLUGIN_DASH }}
         shell: bash
