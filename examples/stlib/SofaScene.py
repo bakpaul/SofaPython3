@@ -1,19 +1,27 @@
 from stlib.geometries.plane import PlaneParameters
-from stlib.collision import CollisionParameters
-from stlib.collision import Collision
-from stlib.visual import Visual
-from splib.core.enum_types import CollisionPrimitive
-from splib.simulation.headers import setupLagrangianCollision
+from stlib.geometries.file import FileParameters
+from stlib.geometries.extract import ExtractParameters
+from stlib.materials.deformable import DeformableBehaviorParameters
+from stlib.collision import Collision, CollisionParameters
+from stlib.entities import Entity, EntityParameters
+from stlib.visual import Visual, VisualParameters
+from splib.core.enum_types import CollisionPrimitive, ElementType, ConstitutiveLaw
+from splib.simulation.headers import setupLagrangianCollision, setupDefaultHeader
+from splib.simulation.ode_solvers import addImplicitODE
+from splib.simulation.linear_solvers import addLinearSolver
 import dataclasses
 import numpy as np
 
 
 
 def createScene(root):
+    root.gravity=[0,0,9.81]
     ##Solvers
-    setupLagrangianCollision(root, displayFlags = "showVisualModels",backgroundColor=[0.8, 0.8, 0.8, 1],
-                             parallelComputing = True,alarmDistance=0.3, contactDistance=0.02,
-                             frictionCoef=0.5, tolerance=1.0e-4, maxIterations=20)
+    setupDefaultHeader(root, displayFlags = "showVisualModels",backgroundColor=[0.8, 0.8, 0.8, 1],
+                             parallelComputing = True)
+    # setupLagrangianCollision(root, displayFlags = "showVisualModels",backgroundColor=[0.8, 0.8, 0.8, 1],
+    #                          parallelComputing = True,alarmDistance=0.3, contactDistance=0.02,
+    #                          frictionCoef=0.5, tolerance=1.0e-4, maxIterations=20)
 
     ##Environement
     planes_lengthNormal = np.array([0, 1, 0])
@@ -29,7 +37,8 @@ def createScene(root):
     plane1_collisionParams.geometry = PlaneParameters(np.array([15,0,1]), np.array([0,0,-1]),
                                                       planes_lengthNormal, planes_lengthNbEdge, planes_widthNbEdge, planes_lengthSize, planes_widthSize)
     plane1 = root.add(Collision, parameters = plane1_collisionParams)
-    #TODO being able to reuse already loaded geometry of current prefab to add any new sub prefab
+    # TODO being able to reuse already loaded geometry of current prefab to add any new sub prefab
+    # We need to enable to directly pass a link to an already existing prefab in place of a prefab parameter object
     plane1_visu = plane1.addChild("Visu")
     plane1_visu.addObject("OglModel", name="VisualModel", src="@../Geometry/container")
 
@@ -46,3 +55,68 @@ def createScene(root):
 
 
     ## Real models
+    Beam = root.addChild("Beam")
+
+    VolumetricObjects = root.addChild("VolumetricObjects")
+    addImplicitODE(VolumetricObjects)
+    addLinearSolver(VolumetricObjects, constantSparsity=True)
+
+    ### Logo
+    LogoParams = EntityParameters()
+    LogoParams.name = "Logo"
+    LogoParams.geometry = FileParameters(filename="mesh/SofaScene/Logo.vtk")
+    LogoParams.geometry.elementType = ElementType.TETRAHEDRA
+    LogoParams.material = DeformableBehaviorParameters()
+    LogoParams.material.constitutiveLawType = ConstitutiveLaw.ELASTIC
+    LogoParams.material.parameters = [200, 0.4]
+
+    def logoAddMaterial(node):
+        DeformableBehaviorParameters.addDeformableMaterial(node)
+        node.addObject("ConstantForceField", name="ConstantForceUpwards", totalForce=[0, 0, -5.0])
+        #TODO deal with that is a more smooth way in the material directly
+        node.addObject("LinearSolverConstraintCorrection", name="ConstraintCorrection", linearSolver=VolumetricObjects.LinearSolver.linkpath, ODESolver=VolumetricObjects.ODESolver.linkpath)
+
+
+    LogoParams.material.addMaterial = logoAddMaterial
+    LogoParams.material.massDensity = 0.003261
+    LogoParams.collision = CollisionParameters()
+    LogoParams.collision.primitives = [CollisionPrimitive.SPHERES]
+    LogoParams.collision.geometry = FileParameters(filename="mesh/SofaScene/LogoColli.sph")
+    #TODO make this flawless with spheres. Here collisions elements are not in the topology and a link is to be made between the loader and the collision object
+    LogoParams.collision.kwargs = {"SphereCollision" : {"radius" : "@Geometry/loader.listRadius"}}
+    LogoParams.visual = VisualParameters()
+    LogoParams.visual.geometry = FileParameters(filename="mesh/SofaScene/LogoVisu.obj")
+    LogoParams.visual.color = [0.7, .35, 0, 0.8]
+
+    Logo = VolumetricObjects.add(Entity, parameters = LogoParams)
+
+    ### S
+    SParams = EntityParameters()
+    SParams.name = "S"
+    SParams.geometry = FileParameters(filename="mesh/SofaScene/S.vtk")
+    SParams.geometry.elementType = ElementType.TETRAHEDRA
+    SParams.material = DeformableBehaviorParameters()
+    SParams.material.constitutiveLawType = ConstitutiveLaw.ELASTIC
+    SParams.material.parameters = [200, 0.45]
+
+    def SAddMaterial(node):
+        DeformableBehaviorParameters.addDeformableMaterial(node)
+        #TODO deal with that is a more smooth way in the material directly
+        node.addObject("LinearSolverConstraintCorrection", name="ConstraintCorrection", linearSolver=VolumetricObjects.LinearSolver.linkpath, ODESolver=VolumetricObjects.ODESolver.linkpath)
+
+    SParams.material.addMaterial = SAddMaterial
+    SParams.material.massDensity = 0.011021
+    SParams.collision = CollisionParameters()
+    SParams.collision.primitives = [CollisionPrimitive.TRIANGLES]
+    # #TODO: to fix link issues for extracted geometry, it might be better to give source geometry relative link + parameters
+    SParams.collision.geometry = ExtractParameters(destinationType=ElementType.TRIANGLES, sourceParameters=SParams.geometry )
+    SParams.visual = VisualParameters()
+    SParams.visual.geometry = FileParameters(filename="mesh/SofaScene/SVisu.obj")
+    SParams.visual.color = [0.7, .7, 0.7, 0.8]
+
+    S = VolumetricObjects.add(Entity, parameters = SParams)
+
+
+    SDensity = 0.011021
+    ODensity = SDensity
+    ADensity = 0.00693695

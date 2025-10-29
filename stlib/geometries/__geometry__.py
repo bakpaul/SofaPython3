@@ -56,9 +56,17 @@ class Geometry(BasePrefab):
         # Generate attribute (positions, edges, triangles, quads, tetrahedra, hexahedra) from the internal data provider
         if isinstance(self.parameters.data, InternalDataProvider) :
             self.parameters.data.generateAttribute(self)
+
         if self.parameters.dynamicTopology :
             if self.parameters.elementType is not None :
-                addDynamicTopology(self, container = dataclasses.asdict(self.parameters.data))
+                addDynamicTopology(self, elementType=self.parameters.elementType, container = {
+                                                                                                "position": self.parameters.data.position,
+                                                                                                "edges": self.parameters.data.edges,
+                                                                                                "triangles": self.parameters.data.triangles,
+                                                                                                "quads": self.parameters.data.quads,
+                                                                                                "tetrahedra": self.parameters.data.tetrahedra,
+                                                                                                "hexahedra": self.parameters.data.hexahedra
+                                                                                            })
             else:
                 raise ValueError
         else:
