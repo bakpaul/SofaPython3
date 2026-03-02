@@ -35,7 +35,7 @@ class ExtractInternalDataProvider(InternalDataProvider):
         # !!! also, does not work because of the function canCreate(), which checks the input (not yet created?)
         # this is all related
         fromLink = "@../../../Geometry/container" # TODO: can we do better than this?
-        addDynamicTopology(node, elementType=self.destinationType)
+        addDynamicTopology(node, elementType=self.destinationType, container={"position" : fromLink + ".position"})
         if self.sourceType == ElementType.TETRAHEDRA:
             node.addObject("Tetra2TriangleTopologicalMapping", input=fromLink, output=node.container.linkpath)
         elif self.sourceType == ElementType.HEXAHEDRA:

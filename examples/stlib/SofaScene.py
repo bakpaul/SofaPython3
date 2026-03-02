@@ -17,11 +17,11 @@ import numpy as np
 def createScene(root):
     root.gravity=[0,0,9.81]
     ##Solvers
-    setupDefaultHeader(root, displayFlags = "showVisualModels",backgroundColor=[0.8, 0.8, 0.8, 1],
-                             parallelComputing = True)
-    # setupLagrangianCollision(root, displayFlags = "showVisualModels",backgroundColor=[0.8, 0.8, 0.8, 1],
-    #                          parallelComputing = True,alarmDistance=0.3, contactDistance=0.02,
-    #                          frictionCoef=0.5, tolerance=1.0e-4, maxIterations=20)
+    # setupDefaultHeader(root, displayFlags = "showVisualModels",backgroundColor=[0.8, 0.8, 0.8, 1],
+    #                          parallelComputing = True)
+    setupLagrangianCollision(root, displayFlags = "showVisualModels",backgroundColor=[0.8, 0.8, 0.8, 1],
+                             parallelComputing = True,alarmDistance=0.3, contactDistance=0.02,
+                             frictionCoef=0.5, tolerance=1.0e-4, maxIterations=20)
 
     ##Environement
     planes_lengthNormal = np.array([0, 1, 0])
@@ -55,13 +55,15 @@ def createScene(root):
 
 
     ## Real models
-    Beam = root.addChild("Beam")
-
-    VolumetricObjects = root.addChild("VolumetricObjects")
-    addImplicitODE(VolumetricObjects)
-    addLinearSolver(VolumetricObjects, constantSparsity=True)
+    # VolumetricObjects = root.addChild("VolumetricObjects")
+    # addImplicitODE(VolumetricObjects)
+    # addLinearSolver(VolumetricObjects, constantSparsity=False, )
 
     ### Logo
+    LogoNode = root.addChild("LogoNode")
+    addImplicitODE(LogoNode)
+    addLinearSolver(LogoNode, constantSparsity=False, )
+
     LogoParams = EntityParameters()
     LogoParams.name = "Logo"
     LogoParams.geometry = FileParameters(filename="mesh/SofaScene/Logo.vtk")
@@ -74,7 +76,7 @@ def createScene(root):
         DeformableBehaviorParameters.addDeformableMaterial(node)
         node.addObject("ConstantForceField", name="ConstantForceUpwards", totalForce=[0, 0, -5.0])
         #TODO deal with that is a more smooth way in the material directly
-        node.addObject("LinearSolverConstraintCorrection", name="ConstraintCorrection", linearSolver=VolumetricObjects.LinearSolver.linkpath, ODESolver=VolumetricObjects.ODESolver.linkpath)
+        node.addObject("LinearSolverConstraintCorrection", name="ConstraintCorrection", linearSolver=LogoNode.LinearSolver.linkpath, ODESolver=LogoNode.ODESolver.linkpath)
 
 
     LogoParams.material.addMaterial = logoAddMaterial
@@ -88,9 +90,13 @@ def createScene(root):
     LogoParams.visual.geometry = FileParameters(filename="mesh/SofaScene/LogoVisu.obj")
     LogoParams.visual.color = [0.7, .35, 0, 0.8]
 
-    Logo = VolumetricObjects.add(Entity, parameters = LogoParams)
+    Logo = LogoNode.add(Entity, parameters = LogoParams)
 
     ### S
+    SNode = root.addChild("SNode")
+    addImplicitODE(SNode)
+    addLinearSolver(SNode, constantSparsity=False, )
+
     SParams = EntityParameters()
     SParams.name = "S"
     SParams.geometry = FileParameters(filename="mesh/SofaScene/S.vtk")
@@ -102,19 +108,19 @@ def createScene(root):
     def SAddMaterial(node):
         DeformableBehaviorParameters.addDeformableMaterial(node)
         #TODO deal with that is a more smooth way in the material directly
-        node.addObject("LinearSolverConstraintCorrection", name="ConstraintCorrection", linearSolver=VolumetricObjects.LinearSolver.linkpath, ODESolver=VolumetricObjects.ODESolver.linkpath)
+        node.addObject("LinearSolverConstraintCorrection", name="ConstraintCorrection", linearSolver=SNode.LinearSolver.linkpath, ODESolver=SNode.ODESolver.linkpath)
 
     SParams.material.addMaterial = SAddMaterial
     SParams.material.massDensity = 0.011021
     SParams.collision = CollisionParameters()
     SParams.collision.primitives = [CollisionPrimitive.TRIANGLES]
-    # #TODO: to fix link issues for extracted geometry, it might be better to give source geometry relative link + parameters
+    # # #TODO: to fix link issues for extracted geometry, it might be better to give source geometry relative link + parameters
     SParams.collision.geometry = ExtractParameters(destinationType=ElementType.TRIANGLES, sourceParameters=SParams.geometry )
     SParams.visual = VisualParameters()
     SParams.visual.geometry = FileParameters(filename="mesh/SofaScene/SVisu.obj")
     SParams.visual.color = [0.7, .7, 0.7, 0.8]
 
-    S = VolumetricObjects.add(Entity, parameters = SParams)
+    S = SNode.add(Entity, parameters = SParams)
 
 
     SDensity = 0.011021
