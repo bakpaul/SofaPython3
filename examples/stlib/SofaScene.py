@@ -1,3 +1,5 @@
+from fontTools.afmLib import preferredAttributeOrder
+
 from stlib.geometries.plane import PlaneParameters
 from stlib.geometries.file import FileParameters
 from stlib.geometries.extract import ExtractParameters
@@ -13,16 +15,14 @@ import dataclasses
 import numpy as np
 
 
-
 def createScene(root):
     root.gravity=[0,0,9.81]
     ##Solvers
     # setupDefaultHeader(root, displayFlags = "showVisualModels",backgroundColor=[0.8, 0.8, 0.8, 1],
     #                          parallelComputing = True)
     setupLagrangianCollision(root, displayFlags = "showVisualModels",backgroundColor=[0.8, 0.8, 0.8, 1],
-                             parallelComputing = True,alarmDistance=0.3, contactDistance=0.02,
-                             frictionCoef=0.5, tolerance=1.0e-4, maxIterations=20)
-
+                                 parallelComputing = True,alarmDistance=0.3, contactDistance=0.02,
+                                 frictionCoef=0.5, tolerance=1.0e-4, maxIterations=20)
     ##Environement
     planes_lengthNormal = np.array([0, 1, 0])
     planes_lengthNbEdge = 1
@@ -64,40 +64,33 @@ def createScene(root):
     addImplicitODE(LogoNode)
     addLinearSolver(LogoNode, constantSparsity=False, )
 
-    LogoParams = EntityParameters()
-    LogoParams.name = "Logo"
-    LogoParams.geometry = FileParameters(filename="mesh/SofaScene/Logo.vtk")
+    LogoParams = EntityParameters(name = "Logo",
+                                  geometry = FileParameters(filename="mesh/SofaScene/Logo.vtk"),
+                                  material = DeformableBehaviorParameters(),
+                                  collision = CollisionParameters(geometry = FileParameters(filename="mesh/SofaScene/LogoColli.sph")),
+                                  visual = VisualParameters(geometry = FileParameters(filename="mesh/SofaScene/LogoVisu.obj")))
+
     LogoParams.geometry.elementType = ElementType.TETRAHEDRA
-    LogoParams.material = DeformableBehaviorParameters()
     LogoParams.material.constitutiveLawType = ConstitutiveLaw.ELASTIC
     LogoParams.material.parameters = [200, 0.4]
-
-    def logoAddMaterial(node):
-        DeformableBehaviorParameters.addDeformableMaterial(node)
-        node.addObject("ConstantForceField", name="ConstantForceUpwards", totalForce=[0, 0, -5.0])
-        #TODO deal with that is a more smooth way in the material directly
-        node.addObject("LinearSolverConstraintCorrection", name="ConstraintCorrection", linearSolver=LogoNode.LinearSolver.linkpath, ODESolver=LogoNode.ODESolver.linkpath)
-
-
-    LogoParams.material.addMaterial = logoAddMaterial
     LogoParams.material.massDensity = 0.003261
-    LogoParams.collision = CollisionParameters()
     LogoParams.collision.primitives = [CollisionPrimitive.SPHERES]
-    LogoParams.collision.geometry = FileParameters(filename="mesh/SofaScene/LogoColli.sph")
     #TODO make this flawless with spheres. Here collisions elements are not in the topology and a link is to be made between the loader and the collision object
     LogoParams.collision.kwargs = {"SphereCollision" : {"radius" : "@Geometry/loader.listRadius"}}
-    LogoParams.visual = VisualParameters()
-    LogoParams.visual.geometry = FileParameters(filename="mesh/SofaScene/LogoVisu.obj")
     LogoParams.visual.color = [0.7, .35, 0, 0.8]
 
     Logo = LogoNode.add(Entity, parameters = LogoParams)
+
+    Logo.material.addObject("ConstantForceField", name="ConstantForceUpwards", totalForce=[0, 0, -5.0])
+    Logo.material.addObject("LinearSolverConstraintCorrection", name="ConstraintCorrection", linearSolver=LogoNode.LinearSolver.linkpath, ODESolver=LogoNode.ODESolver.linkpath)
+
 
     ### S
     SNode = root.addChild("SNode")
     addImplicitODE(SNode)
     addLinearSolver(SNode, constantSparsity=False, )
 
-    SParams = EntityParameters()
+    SParams = EntityParameters("bob.yaml")
     SParams.name = "S"
     SParams.geometry = FileParameters(filename="mesh/SofaScene/S.vtk")
     SParams.geometry.elementType = ElementType.TETRAHEDRA
