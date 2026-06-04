@@ -16,10 +16,6 @@ class EntityParameters(BaseParameters):
 
     stateType : StateType = StateType.VEC3
 
-    ### QUID 
-    addCollision : Optional[Callable] = lambda x : Collision(CollisionParameters())
-    addVisual : Optional[Callable] = lambda x : Visual(VisualParameters()) 
-
     geometry : GeometryParameters = None
     material : MaterialParameters = None
     collision : Optional[CollisionParameters] = None
@@ -34,9 +30,9 @@ class Entity(BasePrefab):
     visual : Visual
     collision : Collision
     geometry : Geometry
-    
+
     parameters : EntityParameters
-    
+
 
     def __init__(self, parameters=EntityParameters(), **kwargs):
         BasePrefab.__init__(self, parameters)

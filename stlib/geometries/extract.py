@@ -38,16 +38,16 @@ def extractGeometry(sourceType : ElementType, parent : Geometry):
 
 class ExtractParameters(GeometryParameters):
     def __init__(self,
-                 sourceParameters : GeometryParameters,
-                 destinationType : ElementType):
+                 sourceElementType : ElementType):
+
+        if sourceElementType == ElementType.TETRAHEDRA :
+            destinationType = ElementType.TRIANGLES
+        elif sourceElementType == ElementType.HEXAHEDRA :
+            destinationType = ElementType.QUADS
+
         GeometryParameters.__init__(self,
                                     data = ExtractInternalDataProvider(),
                                     dynamicTopology = True,
                                     elementType = destinationType)
 
-        self.postInit = partial(extractGeometry, sourceParameters.elementType)
-
-        if(not (sourceParameters.elementType == ElementType.TETRAHEDRA and destinationType == ElementType.TRIANGLES)
-            and not (sourceParameters.elementType == ElementType.HEXAHEDRA and destinationType == ElementType.QUADS) ):
-            raise ValueError("Only configuration possible are 'Tetrahedra to Triangles' and 'Hexahedra to Quads'")
-
+        self.postInit = partial(extractGeometry, sourceElementType)

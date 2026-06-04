@@ -1,30 +1,34 @@
-from stlib.materials.rigid import Rigid
-from stlib.materials.deformable import Deformable
-from stlib.geometries.cube import CubeParameters
-from stlib.geometries.file import FileParameters
-from splib.simulation.headers import setupLagrangianCollision
-from splib.simulation.linear_solvers import addLinearSolver
-from splib.simulation.ode_solvers import addImplicitODE
+from scipy._lib.pyprima.cobyla import geometry
 
-#To be added in splib
-def addSolvers(root):
-    addLinearSolver(root)
-    addImplicitODE(root)
-    root.addObject("LinearSolverConstraintCorrection", linearsolver="@LinearSolver")
+from stlib.geometries.plane import PlaneParameters
+from stlib.geometries.file import FileParameters
+from stlib.geometries.extract import ExtractParameters
+from stlib.materials.deformable import DeformableBehaviorParameters
+from stlib.collision import Collision, CollisionParameters
+from stlib.entities import Entity, EntityParameters
+from stlib.visual import VisualParameters
+from stlib.node_modifiers import NodeModifier
+from stlib.node_modifiers.footers import SimulationSolversParameters, SimulationSettingsParameters
+from stlib.node_modifiers.attachments import FixConstraintParameters, AttachmentConstraintParameters
+
+from splib.core.enum_types import CollisionPrimitive, ElementType, ConstitutiveLaw
 
 def createScene(root):
     root.gravity = [0, 0, -9.81]
 
-    setupLagrangianCollision(root)
-    addSolvers(root)
+    LogoParams = EntityParameters(name = "Logo",
+                                  geometry = FileParameters(filename="mesh/SofaScene/Logo.vtk", elementType = ElementType.TETRAHEDRA),
+                                  material = DeformableBehaviorParameters())
 
-    rigidParams = Rigid.getParameters()
-    rigidParams.geometry = CubeParameters([0, 0, 0], 1, 3)
-    root.add(Rigid,rigidParams)
+    Logo = root.add(Entity, parameters = LogoParams)
 
-    deformableParams = Deformable.getParameters()
-    #Add transformation somewhere here
-    deformableParams.geometry = FileParameters("SofaScene/Logo.vtk")
-    root.add(Deformable,deformableParams)
+    ## Fix a subpart of the logo
+    Logo.add(NodeModifier, on = [Logo], parameters = FixConstraintParameters( boxROIs=[[-1, -2, -13, 3, 2, -7]]))
+
+    ## Deal with solvers + constraints / collision settings (boiling plate code, copy/pasted for nearly every one)
+    ## This will add the Integration scheme and linear solvers
+    root.add(NodeModifier, on = [root], parameters = SimulationSolversParameters())
+    ## This will add the constraint solvers, constraint correction and collision pipeline and setup the button setting
+    root.add(NodeModifier, on = [root], parameters = SimulationSettingsParameters())
 
     return root

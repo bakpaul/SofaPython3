@@ -12,7 +12,7 @@ class VisualParameters(BaseParameters):
     color : Optional[list[float]] = DEFAULT_VALUE
     texture :  Optional[str] = DEFAULT_VALUE
 
-    geometry : GeometryParameters = dataclasses.field(default_factory = lambda : GeometryParameters())
+    geometry : Optional[GeometryParameters] = None
 
 
 class Visual(BasePrefab):
@@ -21,8 +21,12 @@ class Visual(BasePrefab):
         BasePrefab.__init__(self, parameters)
 
     def init(self):
-        self.geometry = self.add(Geometry, parameters=self.parameters.geometry)
-        self.addObject("OglModel", color=self.parameters.color, src=self.geometry.container.linkpath)
+        if (self.parameters.geometry is not None):
+            self.geometry = self.add(Geometry, parameters=self.parameters.geometry)
+            src_geom = self.geometry.container.linkpath
+        else:
+            src_geom = "@../Geometry/container"
+        self.addObject("OglModel", color=self.parameters.color, src=src_geom)
 
 
     @staticmethod
