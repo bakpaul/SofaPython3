@@ -3,6 +3,7 @@ USE_GUI = True
 
 from units import *
 from SimulationParameters import SOFAParameters
+import numpy as np
 
 def main():
     # Required import for python
@@ -28,7 +29,8 @@ def main():
 def createScene(root):
     SceneUnit = SOFAParameters(s, mm, g)
 
-
+    # You now convert any value of any unit to the one expected by SOFa without knowing it. 
+    # Here we know that the gravity constant is 9.81 in SI unit, we let SofaUnit convert it to the custom unit system
     root.gravity=[0, SceneUnit(-9.81, N/kg), 0]
     root.dt=0.02
 
@@ -68,19 +70,23 @@ def createScene(root):
     liver.addObject('MechanicalObject', name="dofs", src="@meshLoader")
     liver.addObject('TetrahedronSetGeometryAlgorithms', template="Vec3d", name="GeomAlgo")
 
-    #You can create values that have a dimension by multiplying a float/int by a unit
+    # You can create values that have a dimension by multiplying a float/int by a unit
     liver.addObject('TetrahedralCorotationalFEMForceField', template="Vec3d", name="FEM", method="large", poissonRatio="0.3", youngModulus=SceneUnit(3 * kPa), computeGlobalMatrix="0")
     
 
-    #Multiplications between 'DimenssionedUnit' is supported and will affect the final unit
+    # Multiplications between 'DimenssionedUnit' is supported and will affect the final unit
     liverVolume = 1.5 * dm**3 # 1L
     liverMass = 1.5 * kg
     liverDensity = liverMass/liverVolume 
-    #You can print the value, the unit will show
+    # You can print the value, the unit will show
     print(f"Liver density is {liverDensity}")
     liver.addObject('DiagonalMass', name="Mass", massDensity=SceneUnit(liverDensity))
 
-    liver.addObject('FixedProjectiveConstraint', name="FixedConstraint", indices="3 39 64")
+    # The library is also compatible with numpy array 
+    # This would also work np.array([10, 1, 5 ]) * N/m
+    # or classical list (but with lists, the list multiplication will fail, you need to specify the unit for each member)
+    stiffness = np.array([10 * N/m, 1 * N/m, 5 * N/m])
+    liver.addObject('RestShapeSpringsForceField', name="WeakConstraint", points="3 39 64", stiffness=SceneUnit(stiffness))
 
     visu = liver.addChild('Visu')
     visu.addObject('OglModel', name="VisualModel", src="@../../LiverSurface")

@@ -1,5 +1,6 @@
 
 from units import *
+import numpy as np
 
 class BaseParameterSet():
 
@@ -45,9 +46,32 @@ class BaseParameterSet():
 
     def __call__(self, *args):
         if len(args) == 1:
-            return self.convert(value=args[0].value, unit= args[0].unit)
+            if isinstance(args[0], np.ndarray):
+                convertedArray = np.empty(args[0].shape, dtype=np.float32)
+                for i in range(convertedArray.size):
+                    convertedArray.flat[i] = self.convert(value=args[0].flat[i].value, unit= args[0].flat[i].unit)
+                return convertedArray
+            elif isinstance(args[0], list):
+                retList = [None] * len(args[0])
+                for i in range(len(retList)):
+                    retList[i] = self.__call__(args[0][i])
+                return retList
+            else:
+                return self.convert(value=args[0].value, unit= args[0].unit)
         elif len(args) == 2:
-            return self.convert(value=args[0], unit= args[1])
+            if isinstance(args[0], np.ndarray):
+                convertedArray = np.empty(args[0].shape, dtype=np.float32)
+                for i in range(convertedArray.size):
+                    convertedArray.flat[i] = self.convert(value=args[0].flat[i], unit = args[1])
+                return convertedArray
+            elif isinstance(args[0], list):
+                retList = [None] * len(args[0])
+                for i in range(len(retList)):
+                    retList[i] = self.__call__(args[0][i], args[1])
+                return retList
+                
+            else:
+                return self.convert(value=args[0], unit= args[1])
         else:
             raise ValueError("This method requires either a DimensionnedValue as input or a float and a Unit.")
     

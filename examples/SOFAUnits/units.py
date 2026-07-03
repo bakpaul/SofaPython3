@@ -22,21 +22,12 @@ class Unit():
     
     def __eq__ (self, other):
         if not isinstance(other, Unit):
-            raise TypeError
+            return NotImplemented
 
         if int(math.log10(self.ratio)) != int(math.log10(other.ratio)) :
             return False
         
-        s_key = self.getKey()
-        o_key = other.getKey()
-
-        isEq = True
-
-        for dicName in ["num", "denum"]:
-            for key in s_key[dicName]:
-                isEq = isEq and (key in o_key[dicName]) and (s_key[dicName][key] == o_key[dicName][key] )
-
-        return isEq 
+        return self.getKey() == other.getKey() 
 
 
     def __mul__(self, other):
@@ -67,60 +58,43 @@ class Unit():
         elif other > 0 :
             return DerivedUnit(numerator=targetNum, denumerator= targetDenum, ratio = targetRatio)
         else:
-            return NeutralUnit
+            return NeutralUnit()
 
     def __truediv__(self, other ):
         if not isinstance(other, Unit):
-            raise TypeError
+            return NotImplemented
         
         return DerivedUnit(numerator=self.numerator + other.denumerator, denumerator= self.denumerator + other.numerator, ratio = self.ratio / other.ratio)
 
     def toString(self, addRatio : bool = True):
-        
         self_key = self.getKey()
-        num_s = "( "
-        first = True
-        for key in self_key["num"]:
-            if not first:
-                num_s+=" * "
-            first = False
-            num_s += key
-            if self_key["num"][key] != 1:
-                exposant = self_key["num"][key]
-                num_s+=f"^{exposant}"
-            
-        if len(num_s) != 2:
-            num_s += " ) "
-        else:
-            num_s = "1"
 
-        
-        denum_s = "/ ( "
-        first = True
-        for key in self_key["denum"]:
-            if not first:
-                denum_s+=" * "
-            first = False
-            denum_s += key
-            if self_key["denum"][key] != 1:
-                exposant = self_key["denum"][key]
-                denum_s+=f"^{exposant}"
-            
+        def side(units: dict) -> str:
+            return " * ".join(
+                k if exp == 1 else f"{k}^{exp}"
+                for k, exp in units.items()
+            )
 
-        if len(num_s) != 4:
-            denum_s += " )"
-        else:
-            denum_s = ""
+        num = side(self_key["num"])
+        denum = side(self_key["denum"])
 
+        num_s = f"( {num} ) " if num else "1"
+        denum_s = f"/ ( {denum} )" if denum else ""
 
-        if addRatio:
-            return f"{self.ratio} * " + num_s + denum_s
-        else:
-            return num_s + denum_s
+        prefix = f"{self.ratio} * " if addRatio else ""
+        return prefix + num_s + denum_s
 
 
     def __str__(self):
         return self.toString()
+    
+    def __hash__(self):
+        key = self.getKey()
+        return hash((
+            frozenset(key["num"].items()),
+            frozenset(key["denum"].items()),
+            int(math.log10(self.ratio)),
+        ))
 
 class NeutralUnit(Unit):
     def __init__(self):
@@ -188,25 +162,21 @@ class DimensionnedValue():
     def __eq__ (self, other):
         if not isinstance(other, DimensionnedValue):
             raise TypeError("Dimensionned values can only be compared to other dimensionned values")
-        
-        no_ratio_s_unit = self.unit
-        no_ratio_s_unit.ratio = 1.0
-        no_ratio_o_unit = other
-        no_ratio_o_unit.ratio = 1.0
+    
 
-        if not no_ratio_s_unit == no_ratio_o_unit:
+        if self.unit.getKey() != other.unit.getKey():
             raise TypeError("Only values that share the same units can be compared")
 
-        return self.value * self.unit.ration == other.value * other.unit.ratio
+        return math.isclose(self.value * self.unit.ratio, other.value * other.unit.ratio)
 
 
     def __mul__(self, other):
         if isinstance(other, DimensionnedValue):
             return DimensionnedValue(self.value * other.value,self.unit * other.unit)
         elif isinstance(other, Unit) :
-            return DimensionnedValue(self.value ,self.unit * other )
+            return DimensionnedValue(self.value ,self.unit * other)
         else :
-            return DimensionnedValue(self.value * other.value,self.unit )
+            return DimensionnedValue(self.value * other,self.unit)
 
     def __rmul__(self, other ):
         return self.__mul__(other)
@@ -215,20 +185,34 @@ class DimensionnedValue():
         if not isinstance(other, int):
             raise ValueError
 
-        return DimensionnedValue(self.value ** other , self.unit**other )
+        return DimensionnedValue(self.value ** other, self.unit**other)
 
-    def __truediv__(self, other ):
+    def __truediv__(self, other):
         if isinstance(other, DimensionnedValue):
-            return DimensionnedValue(self.value / other.value,self.unit / other.unit)
+            return DimensionnedValue(self.value / other.value, self.unit / other.unit)
         elif isinstance(other, Unit) :
-            return DimensionnedValue(self.value ,self.unit / other )
+            return DimensionnedValue(self.value, self.unit / other)
         else:
-            return DimensionnedValue(self.value / other.value,self.unit )
+            return DimensionnedValue(self.value / other, self.unit)
+    
+    def __rtruediv__(self, other):
+        if isinstance(other, DimensionnedValue):
+            return DimensionnedValue(other.value / self.value, other.unit / self.unit)
+        elif isinstance(other, Unit):
+            return DimensionnedValue(1.0 / self.value, other / self.unit)
+        else:
+            return DimensionnedValue(other / self.value, self.unit ** -1)
         
     def __str__(self):
         return f"{self.value * self.unit.ratio} * " + self.unit.toString(False)
         
-
+    def __hash__(self):
+        key = self.unit.getKey()
+        return hash((
+            frozenset(key["num"].items()),
+            frozenset(key["denum"].items()),
+            round(self.value * self.unit.ratio, 9)     # normalized magnitude
+        ))
 
 
 ### Primary units
