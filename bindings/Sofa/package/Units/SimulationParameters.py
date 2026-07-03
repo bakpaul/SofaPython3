@@ -1,5 +1,5 @@
-
-from Sofa.Units.Types import *
+from .Core import *
+from .Definitions import DimensionLess, s, m, kg
 import numpy as np
 
 class BaseParameterSet():

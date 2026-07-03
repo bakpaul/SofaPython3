@@ -5,7 +5,7 @@ Run with:  pytest test_simulation_parameters.py -v
 """
 import pytest
 
-from units import s, m, mm, ms, kg, N, Pa, kPa, kN, tho
+from Definitions import s, m, mm, ms, kg, N, Pa, kPa, kN, tho
 from SimulationParameters import BaseParameterSet, SOFAParameters
 
 
@@ -141,7 +141,7 @@ class TestConvertExponents:
 # ===========================================================================
 
 import numpy as np
-from units import g, v, DimensionLess
+from Definitions import g, v, DimensionLess
 
 
 class TestDuplicateAndMixedRegistration:

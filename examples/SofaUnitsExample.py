@@ -1,7 +1,7 @@
 # Choose in your script to activate or not the GUI
 USE_GUI = True
 
-from Sofa.Units.Types import *
+from Sofa.Units.Definitions import s, m, mm, dm, N, g, kg, kPa  
 from Sofa.Units.SimulationParameters import SOFAParameters
 import numpy as np
 

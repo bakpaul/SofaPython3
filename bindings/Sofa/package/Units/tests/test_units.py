@@ -10,8 +10,7 @@ Run with:  pytest test_units.py -v
 import math
 import pytest
 
-from units import (
-    Unit, NeutralUnit, PrimaryUnit, DerivedUnit, ScaledUnit, DimensionnedValue,
+from Definitions import (
     DimensionLess, m, s, kg,
     v, a, N, Pa, tho,
     nm, mm, cm, km,
@@ -19,6 +18,10 @@ from units import (
     g, mg, t,
     nN, mN, kN, MN,
     kPa, MPa,
+)
+
+from Core import (
+    Unit, NeutralUnit, PrimaryUnit, DerivedUnit, ScaledUnit, DimensionnedValue
 )
 
 
