@@ -27,10 +27,11 @@ def main():
 
 
 def createScene(root):
+    # We know the scene units are second for time, mm for length (because the file we import is in mm) and g for mass
     SceneUnit = SOFAParameters(s, mm, g)
 
-    # You now convert any value of any unit to the one expected by SOFa without knowing it. 
-    # Here we know that the gravity constant is 9.81 in SI unit, we let SofaUnit convert it to the custom unit system
+    # You can now convert any value of any unit to the one expected by SOFA without knowing it. 
+    # Here we know that the gravity constant is 9.81 in SI unit (a.k.a. N/kg), we let SofaUnit convert it to the custom unit system that we defined
     root.gravity=[0, SceneUnit(-9.81, N/kg), 0]
     root.dt=0.02
 
