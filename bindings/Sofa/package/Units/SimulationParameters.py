@@ -1,5 +1,5 @@
 
-from units import *
+from Sofa.Units.Types import *
 import numpy as np
 
 class BaseParameterSet():

@@ -1,8 +1,8 @@
 # Choose in your script to activate or not the GUI
 USE_GUI = True
 
-from units import *
-from SimulationParameters import SOFAParameters
+from Sofa.Units.Types import *
+from Sofa.Units.SimulationParameters import SOFAParameters
 import numpy as np
 
 def main():
@@ -43,7 +43,7 @@ def createScene(root):
     'Sofa.Component.LinearSolver.Iterative',
     'Sofa.Component.Mapping.Linear',
     'Sofa.Component.Mass',
-    'Sofa.Component.IntegrationScheme.Backward',
+    'Sofa.Component.ODESolver.Backward',
     'Sofa.Component.SolidMechanics.FEM.Elastic',    
     'Sofa.Component.StateContainer',
     'Sofa.Component.Topology.Container.Dynamic',
@@ -63,7 +63,7 @@ def createScene(root):
     root.addObject('MeshOBJLoader', name="LiverSurface", filename="mesh/liver-smooth.obj")
 
     liver = root.addChild('Liver')
-    liver.addObject('EulerImplicitIntegrationScheme', name="cg_odesolver", rayleighStiffness="0.1", rayleighMass="0.1")
+    liver.addObject('EulerImplicitSolver', name="cg_odesolver", rayleighStiffness="0.1", rayleighMass="0.1")
     liver.addObject('CGLinearSolver', name="linear_solver", iterations="25", tolerance="1e-09", threshold="1e-09")
     liver.addObject('MeshGmshLoader', name="meshLoader", filename="mesh/liver.msh")
     liver.addObject('TetrahedronSetTopologyContainer', name="topo", src="@meshLoader")
