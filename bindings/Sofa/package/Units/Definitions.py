@@ -3,26 +3,40 @@ from .Core import *
 
 ### Primary units
 DimensionLess = NeutralUnit()
-s = PrimaryUnit("s")        # time
-m = PrimaryUnit("m")        # length
-kg = PrimaryUnit("kg")      # mass
-A = PrimaryUnit("A")        # electric current
-K = PrimaryUnit("K")        # temperature
-mol = PrimaryUnit("mol")    # amount of substance
-cd = PrimaryUnit("cd")      # luminous intensity
+s = PrimaryUnit("s")        # Time
+m = PrimaryUnit("m")        # Length
+kg = PrimaryUnit("kg")      # Mass
+A = PrimaryUnit("A")        # Electrical current
+K = PrimaryUnit("K")        # Temperature
+mol = PrimaryUnit("mol")    # Amount of substance
+cd = PrimaryUnit("cd")      # Luminous intensity
 
 
 ### (some) Derived units
-v = m/s                     # velocity
-a = v/s                     # acceleration
-N = kg*a                    # force (Newton)
-Pa = N/(m**2)               # pressure (Pascal)
-tho = m*N                   # torque 
-J = kg*m**2/s**2            # energy (Joule)
-W = J/s                     # power (Watt)
+#### General 
+Hz = s**(-1)                # Frequency (Hertz)
+J = kg*m**2/s**2            # Energy (Joule)
+W = J/s                     # Power (Watt)
 
+#### Mechanics
+v = m/s                     # Velocity
+a = v/s                     # Acceleration
+N = kg*a                    # Force (Newton)
+Pa = N/(m**2)               # Pressure (Pascal)
+tau = m*N                   # Torque 
 
-## Scaled primary units
+#### Electricity
+C = A*s                     # Electrical charge (Coulomb)
+V = J/C                     # Electrical potential difference (Volt) 
+ohm = V/A                   # Electrical resistance (Ohm) 
+S = ohm**(-1)               # Electrical conductance (Siemens)
+H = ohm * s                 # Electrical inductance (Henry)
+F = C/V                     # Electrical capacitance (Farad)
+Wb = V * s                  # Magnetic flux (Weber)
+T = Wb/(m**2)               # Magnetic flux intensity (Tesla)
+
+### Scaled units 
+#### Primary units
 nm = ScaledUnit(m, 1e-9)
 µm = ScaledUnit(m, 1e-6)
 mm = ScaledUnit(m, 1e-3)
@@ -39,7 +53,7 @@ mg = ScaledUnit(kg, 1e-6)
 g = ScaledUnit(kg, 1e-3)
 t = ScaledUnit(kg, 1e3)
 
-## Scaled derived units
+#### Derived units
 nN = ScaledUnit(N, 1e-9)
 µN = ScaledUnit(N, 1e-6)
 mN = ScaledUnit(N, 1e-3)
@@ -73,6 +87,9 @@ kW = ScaledUnit(W, 1e3)
 MW = ScaledUnit(W, 1e6)
 GW = ScaledUnit(W, 1e9)
 
+kHz = ScaledUnit(Hz, 1e3)
+MHz = ScaledUnit(Hz, 1e6)
+GHz = ScaledUnit(Hz, 1e9)
 
 
 
