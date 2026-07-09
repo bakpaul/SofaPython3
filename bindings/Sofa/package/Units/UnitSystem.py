@@ -80,8 +80,8 @@ class UnitSystem():
     
                 
 
-class MechanicalUnitSystem(BaseParameterSet):
+class MechanicalUnitSystem(UnitSystem):
     def __init__(self, time = s, length = m, mass = kg ):
-        BaseParameterSet.__init__(self, time, length, mass)
+        UnitSystem.__init__(self, time, length, mass)
         
 
