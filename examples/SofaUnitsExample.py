@@ -49,7 +49,8 @@ def createScene(root):
     'Sofa.Component.StateContainer',
     'Sofa.Component.Topology.Container.Dynamic',
     'Sofa.Component.Visual',
-    'Sofa.GL.Component.Rendering3D'
+    'Sofa.GL.Component.Rendering3D',
+    'Sofa.Component.SolidMechanics.Spring'
     ])
 
     root.addObject('DefaultAnimationLoop')
