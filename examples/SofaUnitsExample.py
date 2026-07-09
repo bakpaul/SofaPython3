@@ -2,7 +2,7 @@
 USE_GUI = True
 
 from Sofa.Units.Definitions import s, m, mm, dm, N, g, kg, kPa  
-from Sofa.Units.SimulationParameters import SOFAParameters
+from Sofa.Units.UnitSystem import MechanicalUnitSystem
 import numpy as np
 
 def main():
@@ -28,12 +28,12 @@ def main():
 
 def createScene(root):
     # We know the scene units are second for time, mm for length (because the file we import is in mm) and g for mass
-    SceneUnit = SOFAParameters(s, mm, g)
+    scene_unit = MechanicalUnitSystem(s, mm, g)
 
     # You can now convert any value of any unit to the one expected by SOFA without knowing it. 
     # Here we know that the gravity constant is 9.81 in SI unit (a.k.a. N/kg), we let SofaUnit convert it to the custom unit system that we defined
-    root.gravity = [0, SceneUnit(-9.81, N/kg), 0]
-    root.dt = SceneUnit(0.02, s)
+    root.gravity = [0, scene_unit(-9.81, N/kg), 0]
+    root.dt = scene_unit(0.02, s)
 
     root.addObject("RequiredPlugin", pluginName=[    'Sofa.Component.Collision.Detection.Algorithm',
     'Sofa.Component.Collision.Detection.Intersection',
@@ -60,14 +60,14 @@ def createScene(root):
 
     liver = root.addChild('Liver')
     liver.addObject('EulerImplicitSolver', name="cg_odesolver")
-    liver.addObject('CGLinearSolver', name="linear_solver", iterations= 25, tolerance= SceneUnit(1e-9, m**2) , threshold= SceneUnit(1e-9, m**2) )
+    liver.addObject('CGLinearSolver', name="linear_solver", iterations= 25, tolerance= scene_unit(1e-9, m**2) , threshold= scene_unit(1e-9, m**2) )
     liver.addObject('MeshGmshLoader', name="meshLoader", filename="mesh/liver.msh")
     liver.addObject('TetrahedronSetTopologyContainer', name="topo", src="@meshLoader")
     liver.addObject('MechanicalObject', name="dofs", src="@meshLoader")
     liver.addObject('TetrahedronSetGeometryAlgorithms', template="Vec3d", name="GeomAlgo")
 
     # You can create values that have a dimension by multiplying a float/int by a unit
-    liver.addObject('TetrahedralCorotationalFEMForceField', template="Vec3d", name="FEM", method="large", poissonRatio="0.3", youngModulus=SceneUnit(3 * kPa), computeGlobalMatrix="0")
+    liver.addObject('TetrahedralCorotationalFEMForceField', template="Vec3d", name="FEM", method="large", poissonRatio="0.3", youngModulus=scene_unit(3 * kPa), computeGlobalMatrix="0")
     
 
     # Multiplications between 'DimenssionedUnit' is supported and will affect the final unit
@@ -76,13 +76,13 @@ def createScene(root):
     liverDensity = liverMass/liverVolume 
     # You can print the value, the unit will show
     print(f"Liver density is {liverDensity}")
-    liver.addObject('DiagonalMass', name="Mass", massDensity=SceneUnit(liverDensity))
+    liver.addObject('DiagonalMass', name="Mass", massDensity=scene_unit(liverDensity))
 
     # The library is also compatible with numpy array 
     # This would also work np.array([10, 1, 5 ]) * N/m
     # or classical list (but with lists, the list multiplication will fail, you need to specify the unit for each member)
     stiffness = np.array([10 * N/m, 1 * N/m, 5 * N/m])
-    liver.addObject('RestShapeSpringsForceField', name="WeakConstraint", points=[3, 39, 64], stiffness=SceneUnit(stiffness))
+    liver.addObject('RestShapeSpringsForceField', name="WeakConstraint", points=[3, 39, 64], stiffness=scene_unit(stiffness))
 
     visu = liver.addChild('Visu')
     visu.addObject('OglModel', name="VisualModel", src="@../../LiverSurface")

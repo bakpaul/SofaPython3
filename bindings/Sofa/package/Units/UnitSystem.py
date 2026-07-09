@@ -2,7 +2,7 @@ from .Core import *
 from .Definitions import DimensionLess, s, m, kg
 import numpy as np
 
-class BaseParameterSet():
+class UnitSystem():
 
     units : dict
 
@@ -80,7 +80,7 @@ class BaseParameterSet():
     
                 
 
-class SOFAParameters(BaseParameterSet):
+class MechanicalUnitSystem(BaseParameterSet):
     def __init__(self, time = s, length = m, mass = kg ):
         BaseParameterSet.__init__(self, time, length, mass)
         
