@@ -32,8 +32,8 @@ def createScene(root):
 
     # You can now convert any value of any unit to the one expected by SOFA without knowing it. 
     # Here we know that the gravity constant is 9.81 in SI unit (a.k.a. N/kg), we let SofaUnit convert it to the custom unit system that we defined
-    root.gravity=[0, SceneUnit(-9.81, N/kg), 0]
-    root.dt=0.02
+    root.gravity = [0, SceneUnit(-9.81, N/kg), 0]
+    root.dt = SceneUnit(0.02, s)
 
     root.addObject("RequiredPlugin", pluginName=[    'Sofa.Component.Collision.Detection.Algorithm',
     'Sofa.Component.Collision.Detection.Intersection',
@@ -55,17 +55,12 @@ def createScene(root):
     root.addObject('DefaultAnimationLoop')
 
     root.addObject('VisualStyle', displayFlags="showCollisionModels")
-    root.addObject('CollisionPipeline', name="CollisionPipeline")
-    root.addObject('BruteForceBroadPhase', name="BroadPhase")
-    root.addObject('BVHNarrowPhase', name="NarrowPhase")
-    root.addObject('CollisionResponse', name="CollisionResponse", response="PenalityContactForceField")
-    root.addObject('DiscreteIntersection')
 
     root.addObject('MeshOBJLoader', name="LiverSurface", filename="mesh/liver-smooth.obj")
 
     liver = root.addChild('Liver')
-    liver.addObject('EulerImplicitSolver', name="cg_odesolver", rayleighStiffness="0.1", rayleighMass="0.1")
-    liver.addObject('CGLinearSolver', name="linear_solver", iterations="25", tolerance="1e-09", threshold="1e-09")
+    liver.addObject('EulerImplicitSolver', name="cg_odesolver")
+    liver.addObject('CGLinearSolver', name="linear_solver", iterations= 25, tolerance= SceneUnit(1e-9, m**2) , threshold= SceneUnit(1e-9, m**2) )
     liver.addObject('MeshGmshLoader', name="meshLoader", filename="mesh/liver.msh")
     liver.addObject('TetrahedronSetTopologyContainer', name="topo", src="@meshLoader")
     liver.addObject('MechanicalObject', name="dofs", src="@meshLoader")
@@ -87,7 +82,7 @@ def createScene(root):
     # This would also work np.array([10, 1, 5 ]) * N/m
     # or classical list (but with lists, the list multiplication will fail, you need to specify the unit for each member)
     stiffness = np.array([10 * N/m, 1 * N/m, 5 * N/m])
-    liver.addObject('RestShapeSpringsForceField', name="WeakConstraint", points="3 39 64", stiffness=SceneUnit(stiffness))
+    liver.addObject('RestShapeSpringsForceField', name="WeakConstraint", points=[3, 39, 64], stiffness=SceneUnit(stiffness))
 
     visu = liver.addChild('Visu')
     visu.addObject('OglModel', name="VisualModel", src="@../../LiverSurface")
