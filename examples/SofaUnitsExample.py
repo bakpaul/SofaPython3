@@ -1,6 +1,10 @@
 # Choose in your script to activate or not the GUI
 USE_GUI = True
 
+from Sofa.Units.Definitions import s, m, mm, dm, N, g, kg, kPa  
+from Sofa.Units.UnitSystem import MechanicalUnitSystem
+import numpy as np
+
 def main():
     # Required import for python
     import Sofa
@@ -23,8 +27,13 @@ def main():
 
 
 def createScene(root):
-    root.gravity=[0, -9.81, 0]
-    root.dt=0.02
+    # We know the scene units are second for time, mm for length (because the file we import is in mm) and g for mass
+    scene_unit = MechanicalUnitSystem(s, mm, g)
+
+    # You can now convert any value of any unit to the one expected by SOFA without knowing it. 
+    # Here we know that the gravity constant is 9.81 in SI unit (a.k.a. N/kg), we let SofaUnit convert it to the custom unit system that we defined
+    root.gravity = [0, scene_unit(-9.81, N/kg), 0]
+    root.dt = scene_unit(0.02, s)
 
     root.addObject("RequiredPlugin", pluginName=[    'Sofa.Component.Collision.Detection.Algorithm',
     'Sofa.Component.Collision.Detection.Intersection',
@@ -35,47 +44,50 @@ def createScene(root):
     'Sofa.Component.LinearSolver.Iterative',
     'Sofa.Component.Mapping.Linear',
     'Sofa.Component.Mass',
-    'Sofa.Component.IntegrationScheme.Backward',
-    'Sofa.Component.SolidMechanics.FEM.Elastic',
+    'Sofa.Component.ODESolver.Backward',
+    'Sofa.Component.SolidMechanics.FEM.Elastic',    
     'Sofa.Component.StateContainer',
     'Sofa.Component.Topology.Container.Dynamic',
     'Sofa.Component.Visual',
-    'Sofa.GL.Component.Rendering3D'
+    'Sofa.GL.Component.Rendering3D',
+    'Sofa.Component.SolidMechanics.Spring'
     ])
 
     root.addObject('DefaultAnimationLoop')
 
     root.addObject('VisualStyle', displayFlags="showCollisionModels")
-    root.addObject('CollisionPipeline', name="CollisionPipeline")
-    root.addObject('BruteForceBroadPhase', name="BroadPhase")
-    root.addObject('BVHNarrowPhase', name="NarrowPhase")
-    root.addObject('CollisionResponse', name="CollisionResponse", response="PenalityContactForceField")
-    root.addObject('DiscreteIntersection')
 
     root.addObject('MeshOBJLoader', name="surface_mesh_loader", filename="mesh/liver-smooth.obj")
 
     liver = root.addChild('Liver')
-
-    liver.addObject('EulerImplicitIntegrationScheme', name="integration_scheme", rayleighStiffness="0.1", rayleighMass="0.1")
-    liver.addObject('CGLinearSolver', name="iterative_linear_solver", iterations="25", tolerance="1e-09", threshold="1e-09")
+    liver.addObject('EulerImplicitSolver', name="integration_scheme")
+    liver.addObject('CGLinearSolver', name="iterative_linear_solver", iterations= 25, tolerance= scene_unit(1e-9, m**2) , threshold= scene_unit(1e-9, m**2) )
     liver.addObject('MeshGmshLoader', name="volume_mesh_loader", filename="mesh/liver.msh")
     liver.addObject('TetrahedronSetTopologyContainer', name="topo", src="@volume_mesh_loader")
     liver.addObject('MechanicalObject', name="dofs", src="@volume_mesh_loader")
-
     liver.addObject('TetrahedronSetGeometryAlgorithms', template="Vec3d", name="GeomAlgo")
-    liver.addObject('DiagonalMass', name="Mass", massDensity="1.0")
-    liver.addObject('TetrahedralCorotationalFEMForceField', template="Vec3d", name="FEM", method="large", poissonRatio="0.3", youngModulus="3000", computeGlobalMatrix="0")
-    liver.addObject('FixedProjectiveConstraint', name="FixedConstraint", indices="3 39 64")
+
+    # You can create values that have a dimension by multiplying a float/int by a unit
+    liver.addObject('TetrahedralCorotationalFEMForceField', template="Vec3d", name="FEM", method="large", poissonRatio="0.3", youngModulus=scene_unit(3 * kPa), computeGlobalMatrix="0")
+    
+
+    # Multiplications between 'DimenssionedUnit' is supported and will affect the final unit
+    liverVolume = 1.5 * dm**3 # 1L
+    liverMass = 1.5 * kg
+    liverDensity = liverMass/liverVolume 
+    # You can print the value, the unit will show
+    print(f"Liver density is {liverDensity}")
+    liver.addObject('DiagonalMass', name="Mass", massDensity=scene_unit(liverDensity))
+
+    # The library is also compatible with numpy array 
+    # This would also work np.array([10, 1, 5 ]) * N/m
+    # or classical list (but with lists, the list multiplication will fail, you need to specify the unit for each member)
+    stiffness = np.array([10 * N/m, 1 * N/m, 5 * N/m])
+    liver.addObject('RestShapeSpringsForceField', name="WeakConstraint", points=[3, 39, 64], stiffness=scene_unit(stiffness))
 
     visu = liver.addChild('Visu')
     visu.addObject('OglModel', name="VisualModel", src="@../../surface_mesh_loader")
     visu.addObject('BarycentricMapping', name="VisualMapping", input="@../dofs", output="@VisualModel")
-
-    surf = liver.addChild('Surf')
-    surf.addObject('SphereLoader', name="sphereLoader", filename="mesh/liver.sph")
-    surf.addObject('MechanicalObject', name="spheres", position="@sphereLoader.position")
-    surf.addObject('SphereCollisionModel', name="CollisionModel", listRadius="@sphereLoader.listRadius")
-    surf.addObject('BarycentricMapping', name="CollisionMapping", input="@../dofs", output="@spheres")
 
     return root
 
