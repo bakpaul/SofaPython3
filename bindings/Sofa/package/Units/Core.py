@@ -147,7 +147,10 @@ class ScaledUnit(Unit):
     def __init__(self, unit : Unit, ratio : float):
         self.numerator = unit.numerator.copy()
         self.denumerator = unit.denumerator.copy()
+
         self.ratio = ratio
+        if hasattr(unit, "ratio"):
+             self.ratio *= unit.ratio
 
 
 class DimensionnedValue():
